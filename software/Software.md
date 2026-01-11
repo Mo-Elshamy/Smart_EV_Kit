@@ -315,4 +315,4 @@ This section documents critical bugs fixed during initial development to prevent
    * **Problem:** Upon system boot or unlock, the Motor Relay (Relay 1) would energize immediately, potentially causing the car to move before the software was ready.
    * **Fix:** The relay logic was inverted (Active Low) and the initialization state was explicitly set to `GPIO.HIGH` (OFF) to ensure the car remains stationary until the user explicitly engages it.
 
-**Project Completed.**
+## [Back To Main](/Smart_EV_Kit/README.md)
