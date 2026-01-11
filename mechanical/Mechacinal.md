@@ -2,6 +2,8 @@
 
 This directory contains all mechanical assets for the EV project, including 3D printable STL files, 2D laser-cutting profiles for the acrylic body, and archived resources for student activities.
 
+![Front Bar](../images/Car_3D.png)
+
 ## 📂 Directory Structure
 
 ```
@@ -13,18 +15,18 @@ mechanical/
 
 ```
 
-## 1. [3D Printed Parts](/Smart_EV_Kit/mechanical/3D_Printed_Parts/)
+## 1. [3D Printed Parts](mechanical/3D_Printed_Parts/)
 *Material Recommendation: PLA*
 
 
 | Component                 | Preview                                             | Function / Description                                                                                   | ⚠️ Design Defects & V2 Improvements                                                                                                                                                                                                                 |
 | ------------------------- | --------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Front Bar**       | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | Mounts the waterproof ultrasonic sensors to the front chassis.                                           | **Tolerance Issue:** Sensor holes are too tight.   →*Fix:* Increase hole diameter for proper fit.                                                                                                                                            |
-| **Back Bar**        | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | Mounts rear ultrasonic sensors. Interfaces with the*Holder*piece.                                      | **Alignment Issue:** Screw holes are tilted, causing misalignment with the holder. Sensor holes are also too tight.   →*Fix:* Straighten screw channels and increase sensor hole size.                                                       |
-| **Control Box**     | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | 3-part main control unit housing. Holds the Touch Screen, Raspberry Pi, Sensors, and Relays.             | **Volume & Fitment Issues:** 1. Bottom face is closed, restricting inner space.*Fix: Open the ground face.* 2. Screen mounting is improper, causing bending when screws are tightened.*Fix: Add dedicated screen mounting holes/standoffs.* |
-| **Chassis Holder**  | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | 2-piece clamp mechanism that locks onto the tubular chassis. Anchors the acrylic sheets and sensor bars. | **Fitment Issue:** Inner diameter is too large to grip the tube securely.   →*Fix:* Reduce inner diameter to ensure a tight friction fit when screwed down.                                                                                  |
-| **Back LED**        | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | Grooved bar mounted on the*Back Cover* . Holds the neon LED strip.                                     | ✅**Ready:** No reported issues.                                                                                                                                                                                                                |
-| **Front LED (L/R)** | ![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png) | "Side Mirror" style housings (Left & Right) with grooves for neon LED strips.                            | **Angle Issue:** The mount angle causes lights to point incorrectly.   →*Fix:*Adjust mounting angle to face straight forward.                                                                                                                  |
+| **Front Bar**       | ![Front Bar](../images/Front_Bar.png) | Mounts the waterproof ultrasonic sensors to the front chassis.                                           | **Tolerance Issue:** Sensor holes are too tight.   →*Fix:* Increase hole diameter for proper fit.                                                                                                                                            |
+| **Back Bar**        | ![Rear Bar](../images/Rear_Bar.png) | Mounts rear ultrasonic sensors. Interfaces with the*Holder*piece.                                      | **Alignment Issue:** Screw holes are tilted, causing misalignment with the holder. Sensor holes are also too tight.   →*Fix:* Straighten screw channels and increase sensor hole size.                                                       |
+| **Control Box**     | ![Control Box](../images/Control_Box.png) | 3-part main control unit housing. Holds the Touch Screen, Raspberry Pi, Sensors, and Relays.             | **Volume & Fitment Issues:** 1. Bottom face is closed, restricting inner space.*Fix: Open the ground face.* 2. Screen mounting is improper, causing bending when screws are tightened.*Fix: Add dedicated screen mounting holes/standoffs.* |
+| **Chassis Holder**  | ![Chassis Holder](../images/Holder.png) | 2-piece clamp mechanism that locks onto the tubular chassis. Anchors the acrylic sheets and sensor bars. | **Fitment Issue:** Inner diameter is too large to grip the tube securely.   →*Fix:* Reduce inner diameter to ensure a tight friction fit when screwed down.                                                                                  |
+| **Back LED**        | ![Back LED](../images/LED_Back.png) | Grooved bar mounted on the*Back Cover* . Holds the neon LED strip.                                     | ✅**Ready:** No reported issues.                                                                                                                                                                                                                |
+| **Front LED (L/R)** | ![Front LED (L/R)](../images/LED_Front.png) | "Side Mirror" style housings (Left & Right) with grooves for neon LED strips.                            | **Angle Issue:** The mount angle causes lights to point incorrectly.   →*Fix:*Adjust mounting angle to face straight forward.                                                                                                                  |
 
 ## 2. [Acrylic Body Covers](/Smart_EV_Kit/mechanical/Acrylic_Covers/)
 
@@ -41,7 +43,7 @@ mechanical/
 
 ### 📦 [Steering_Prototype](/Smart_EV_Kit/mechanical/rack-and-pinion-steering-model_Activity.zip)
 
-![Front Bar](/Smart_EV_Kit/images/Car_3D_Concept.png)
+![Front Bar](/images/steering_prototype.jpg)
 
 **Description:** A compressed archive containing prototype files and assets for the student steering mechanism activity.
 
@@ -52,4 +54,4 @@ mechanical/
 
 *Last Updated: January 2026*
 
-## [Back To Main](/Smart_EV_Kit/README.md)
+## [Back To Main]()

@@ -15,6 +15,8 @@ This project replaces traditional analog car switches with a modern, 7-inch touc
 * **Dynamic Lighting:** Controls addressable WS2811 LED strips for Headlights, Taillights, Turn Signals, and animated Interior Underglow.
 * **Digital Dashboard:** A high-contrast, touch-friendly GUI displays speed (simulated), temperature, humidity, time, and system status.
 * **Motor Interlock:** Hardware relays physically isolate the motor control circuits until software authentication is verified.
+![Front Bar](../images/image.png)
+
 
 ## 2. Hardware Configuration
 
@@ -37,6 +39,8 @@ This project replaces traditional analog car switches with a modern, 7-inch touc
 * **Circuit Components:**
   * Resistors: 1kΩ and 2kΩ (for 16x Voltage Dividers on Ultrasonic Echo lines).
   * Breadboard or PCB for signal distribution.
+
+![Front Bar](../images/Wiring_digram.png)
 
 ### Master Pinout Map (BCM Numbering)
 
@@ -63,6 +67,8 @@ This project replaces traditional analog car switches with a modern, 7-inch touc
 |                           | Relay 2 (Reverse)       | **GPIO 15** | 10           | Active Low Logic.                          |
 | **Audio**           | Active Buzzer           | **GPIO 13** | 33           |                                            |
 | **Environment**     | DHT11 Data              | **GPIO 4**  | 7            | Requires Pull-up resistor.                 |
+
+![Front Bar](../images/Pinout.png)
 
 ## 3. Software Installation
 
@@ -314,5 +320,8 @@ This section documents critical bugs fixed during initial development to prevent
 2. **Unintended Motion (Safety Critical):**
    * **Problem:** Upon system boot or unlock, the Motor Relay (Relay 1) would energize immediately, potentially causing the car to move before the software was ready.
    * **Fix:** The relay logic was inverted (Active Low) and the initialization state was explicitly set to `GPIO.HIGH` (OFF) to ensure the car remains stationary until the user explicitly engages it.
+
+![Front Bar](../images/Control%20unit.jpeg)
+
 
 ## [Back To Main](/Smart_EV_Kit/README.md)
