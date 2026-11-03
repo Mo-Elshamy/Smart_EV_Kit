@@ -23,10 +23,13 @@ class ActuatorController:
             threading.Thread(target=self._buzzer_loop, daemon=True).start()
 
     def _init_hardware(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(PIN_BUZZER, GPIO.OUT, initial=GPIO.LOW)
-        # Relays are Active Low: start HIGH (OFF) for safety
-        GPIO.setup(PIN_RELAYS, GPIO.OUT, initial=GPIO.HIGH)
+        try:
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(PIN_BUZZER, GPIO.OUT, initial=GPIO.LOW)
+            # Relays are Active Low: start HIGH (OFF) for safety
+            GPIO.setup(PIN_RELAYS, GPIO.OUT, initial=GPIO.HIGH)
+        except Exception as e:
+            print(f"Warning: Failed to setup actuator GPIO pins ({e}).")
 
     def set_relay(self, index: int, state: bool):
         """Set relay state (Active Low: True=LOW/ON, False=HIGH/OFF)."""

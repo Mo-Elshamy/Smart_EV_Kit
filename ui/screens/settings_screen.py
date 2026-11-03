@@ -9,7 +9,7 @@ from config import THEME, SENSOR_NAMES
 
 
 class SettingsHubPage(QWidget):
-    """Unified Settings Hub (Lighting, Access Control, Diagnostics)."""
+    """Unified Settings Hub (Lighting, Access Control, Diagnostics) — Enlarged for 1080p."""
 
     def __init__(self, callbacks, storage, parent=None):
         super().__init__(parent)
@@ -18,49 +18,74 @@ class SettingsHubPage(QWidget):
 
         self.setStyleSheet(f"background-color: {THEME['bg_dark']}; color: {THEME['text_main']};")
         layout = QHBoxLayout(self)
+        layout.setContentsMargins(15, 15, 15, 15)
+        layout.setSpacing(20)
 
-        # --- LEFT MENU ---
+        # --- LEFT MENU (Enlarged) ---
         menu_frame = QFrame()
-        menu_frame.setFixedWidth(240)
-        menu_frame.setStyleSheet(f"background-color: {THEME['menu_bg']}; border-right: 1px solid #ccc;")
+        menu_frame.setFixedWidth(320)
+        menu_frame.setStyleSheet(f"""
+            QFrame {{
+                background-color: {THEME['menu_bg']};
+                border-radius: 15px;
+                border: 1px solid #ccc;
+            }}
+        """)
         menu_layout = QVBoxLayout(menu_frame)
+        menu_layout.setContentsMargins(15, 25, 15, 25)
+        menu_layout.setSpacing(15)
 
         lbl_settings = QLabel("SETTINGS")
-        lbl_settings.setFont(QFont("Segoe UI", 20, QFont.Bold))
-        lbl_settings.setStyleSheet(f"color: {THEME['text_dim']}; margin-bottom: 20px;")
+        lbl_settings.setAlignment(Qt.AlignCenter)
+        lbl_settings.setFont(QFont("Segoe UI", 26, QFont.Bold))
+        lbl_settings.setStyleSheet(f"color: {THEME['text_dim']}; margin-bottom: 15px;")
         menu_layout.addWidget(lbl_settings)
 
         self.menu_list = QListWidget()
-        self.menu_list.setFont(QFont("Segoe UI", 18, QFont.Bold))
+        self.menu_list.setFont(QFont("Segoe UI", 22, QFont.Bold))
         self.menu_list.addItem("Light Config")
         self.menu_list.addItem("Access Config")
         self.menu_list.addItem("Diagnostics")
         self.menu_list.setCurrentRow(0)
         self.menu_list.currentRowChanged.connect(self._change_page)
         self.menu_list.setStyleSheet(f"""
-            QListWidget {{ border: none; background: transparent; outline: none; }}
-            QListWidget::item {{ padding: 18px; color: {THEME['text_main']}; border-radius: 5px; }}
+            QListWidget {{
+                border: none;
+                background: transparent;
+                outline: none;
+            }}
+            QListWidget::item {{
+                padding: 22px 15px;
+                color: {THEME['text_main']};
+                border-radius: 10px;
+                margin-bottom: 8px;
+            }}
             QListWidget::item:selected {{
                 background-color: {THEME['menu_sel']};
                 color: black;
-                border-left: 6px solid {THEME['accent_cyan']};
+                border-left: 8px solid {THEME['accent_cyan']};
             }}
         """)
         menu_layout.addWidget(self.menu_list)
 
         btn_exit = QPushButton("BACK TO DASH")
-        btn_exit.setFont(QFont("Segoe UI", 16, QFont.Bold))
+        btn_exit.setFont(QFont("Segoe UI", 20, QFont.Bold))
+        btn_exit.setMinimumHeight(80)
         btn_exit.setStyleSheet("""
-            background-color: #ddd;
-            color: #333;
-            padding: 18px;
-            border-radius: 5px;
-            border: 1px solid #bbb;
+            QPushButton {{
+                background-color: #ddd;
+                color: #222;
+                border-radius: 12px;
+                border: 2px solid #bbb;
+            }}
+            QPushButton:pressed {{
+                background-color: #bbb;
+            }}
         """)
         btn_exit.clicked.connect(self.cb['return_to_dash'])
         menu_layout.addWidget(btn_exit)
 
-        # --- RIGHT CONTENT (STACK) ---
+        # --- RIGHT CONTENT STACK ---
         self.content_stack = QStackedWidget()
 
         self.page_light = QWidget()
@@ -91,39 +116,39 @@ class SettingsHubPage(QWidget):
     # ==========================================
     def _setup_light_config_ui(self, parent):
         layout = QVBoxLayout(parent)
-        layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(15)
+        layout.setContentsMargins(20, 15, 20, 15)
+        layout.setSpacing(16)
 
         header = QLabel("INTERIOR LIGHTING")
-        header.setFont(QFont("Segoe UI", 26, QFont.Bold))
+        header.setFont(QFont("Segoe UI", 32, QFont.Bold))
         header.setAlignment(Qt.AlignCenter)
         header.setStyleSheet(f"color: {THEME['accent_cyan']};")
         layout.addWidget(header)
 
-        # Preview box
+        # Preview box (Taller & cleaner)
         self.color_preview = QLabel("PREVIEW")
         self.color_preview.setAlignment(Qt.AlignCenter)
-        self.color_preview.setFont(QFont("Segoe UI", 20, QFont.Bold))
-        self.color_preview.setMinimumHeight(100)
+        self.color_preview.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        self.color_preview.setMinimumHeight(130)
         self.color_preview.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         layout.addWidget(self.color_preview, 2)
 
-        # RGB Sliders
+        # RGB Sliders (Chunky touch-friendly track & handles)
         slider_container = QWidget()
         slider_layout = QVBoxLayout(slider_container)
-        slider_layout.setSpacing(12)
+        slider_layout.setSpacing(16)
         slider_layout.setContentsMargins(0, 5, 0, 5)
 
         self.sliders = []
         labels = ["R", "G", "B"]
-        colors = ["#ff5555", "#55ff55", "#5555ff"]
+        colors = ["#ff4444", "#44cc44", "#4444ff"]
         init_rgb = self.storage.interior_rgb
 
         for i in range(3):
             row = QHBoxLayout()
             lbl = QLabel(labels[i])
-            lbl.setFont(QFont("Arial", 22, QFont.Bold))
-            lbl.setFixedWidth(50)
+            lbl.setFont(QFont("Arial", 28, QFont.Bold))
+            lbl.setFixedWidth(60)
             lbl.setStyleSheet(f"color: {colors[i]};")
             row.addWidget(lbl)
 
@@ -132,16 +157,23 @@ class SettingsHubPage(QWidget):
             slider.setValue(init_rgb[i])
             slider.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
             slider.setStyleSheet(f"""
-                QSlider::groove:horizontal {{ height: 16px; background: #444; border-radius: 8px; }}
+                QSlider::groove:horizontal {{
+                    height: 24px;
+                    background: #444;
+                    border-radius: 12px;
+                }}
                 QSlider::handle:horizontal {{
                     background: {colors[i]};
-                    width: 32px;
-                    height: 32px;
-                    margin: -8px 0;
-                    border-radius: 16px;
-                    border: 3px solid white;
+                    width: 48px;
+                    height: 48px;
+                    margin: -12px 0;
+                    border-radius: 24px;
+                    border: 4px solid white;
                 }}
-                QSlider::sub-page:horizontal {{ background: {colors[i]}; border-radius: 8px; }}
+                QSlider::sub-page:horizontal {{
+                    background: {colors[i]};
+                    border-radius: 12px;
+                }}
             """)
             slider.valueChanged.connect(self._on_slider_changed)
             self.sliders.append(slider)
@@ -150,30 +182,33 @@ class SettingsHubPage(QWidget):
 
         layout.addWidget(slider_container, 3)
 
-        # Presets Grid
+        # Presets Grid (Enlarged)
         grid = QGridLayout()
-        grid.setSpacing(12)
+        grid.setSpacing(14)
         presets = [("ICE", 0, 255, 255), ("RED", 255, 0, 0), ("GRN", 0, 255, 0), ("BLU", 0, 0, 255)]
         for idx, (name, r, g, b) in enumerate(presets):
             btn = QPushButton(name)
-            btn.setFont(QFont("Segoe UI", 16, QFont.Bold))
+            btn.setFont(QFont("Segoe UI", 20, QFont.Bold))
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setMinimumHeight(65)
+            btn.setMinimumHeight(85)
             btn.setStyleSheet(f"""
                 QPushButton {{
                     background-color: rgb({r},{g},{b});
                     color: {'black' if (r+g+b)>300 else 'white'};
-                    border-radius: 10px;
-                    border: 2px solid #999;
+                    border-radius: 14px;
+                    border: 3px solid #777;
+                }}
+                QPushButton:pressed {{
+                    border: 3px solid white;
                 }}
             """)
             btn.clicked.connect(lambda _, r=r, g=g, b=b: self._set_sliders(r, g, b))
             grid.addWidget(btn, 0, idx)
         layout.addLayout(grid, 2)
 
-        # Patterns Row
+        # Patterns Row (Enlarged)
         p_layout = QHBoxLayout()
-        p_layout.setSpacing(12)
+        p_layout.setSpacing(14)
         patterns = [("SOLID", "SOLID"), ("PULSE", "BREATHE"), ("RGB", "RAINBOW")]
         saved_mode = self.storage.interior_mode
 
@@ -182,21 +217,24 @@ class SettingsHubPage(QWidget):
             btn.setCheckable(True)
             btn.setAutoExclusive(True)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setMinimumHeight(70)
-            btn.setFont(QFont("Segoe UI", 16, QFont.Bold))
+            btn.setMinimumHeight(85)
+            btn.setFont(QFont("Segoe UI", 20, QFont.Bold))
             if mode == saved_mode:
                 btn.setChecked(True)
             btn.setStyleSheet(f"""
                 QPushButton {{
                     background-color: #ddd;
                     color: #333;
-                    border-radius: 10px;
+                    border-radius: 14px;
                     border: 2px solid #ccc;
                 }}
                 QPushButton:checked {{
                     background-color: {THEME['accent_cyan']};
                     color: white;
-                    border: 2px solid #005577;
+                    border: 3px solid #005577;
+                }}
+                QPushButton:pressed {{
+                    background-color: #bbb;
                 }}
             """)
             btn.clicked.connect(lambda _, m=mode: self._on_pattern_selected(m))
@@ -222,8 +260,8 @@ class SettingsHubPage(QWidget):
         self.color_preview.setStyleSheet(f"""
             background-color: rgb({r},{g},{b});
             color: {'black' if (r+g+b)>300 else 'white'};
-            border: 3px solid #333;
-            border-radius: 15px;
+            border: 4px solid #333;
+            border-radius: 18px;
         """)
 
     def _on_pattern_selected(self, mode):
@@ -236,35 +274,77 @@ class SettingsHubPage(QWidget):
     def _setup_access_config_ui(self, parent):
         layout = QVBoxLayout(parent)
         layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(15)
+        layout.setSpacing(18)
 
         header = QLabel("ACCESS CONTROL")
-        header.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        header.setFont(QFont("Segoe UI", 32, QFont.Bold))
         header.setStyleSheet(f"color: {THEME['accent_green']};")
         layout.addWidget(header)
 
         self.list_keys = QListWidget()
-        self.list_keys.setStyleSheet("background-color: #fff; color: #000; font-size: 16px; border: 1px solid #ccc; padding: 5px;")
+        self.list_keys.setStyleSheet("""
+            QListWidget {{
+                background-color: #fff;
+                color: #111;
+                font-size: 22px;
+                font-weight: bold;
+                border: 2px solid #ccc;
+                border-radius: 12px;
+                padding: 10px;
+            }}
+            QListWidget::item {{
+                padding: 18px;
+                border-bottom: 1px solid #eee;
+            }}
+            QListWidget::item:selected {{
+                background-color: #e0f2fe;
+                color: #0369a1;
+                border-radius: 8px;
+            }}
+        """)
         self.refresh_key_list()
         layout.addWidget(self.list_keys)
 
         self.lbl_access_status = QLabel("Status: Ready")
         self.lbl_access_status.setAlignment(Qt.AlignCenter)
-        self.lbl_access_status.setFont(QFont("Segoe UI", 16))
+        self.lbl_access_status.setFont(QFont("Segoe UI", 22, QFont.Bold))
         self.lbl_access_status.setStyleSheet("color: #666; font-style: italic;")
+        self.lbl_access_status.setMinimumHeight(45)
         layout.addWidget(self.lbl_access_status)
 
         btn_row = QHBoxLayout()
-        btn_row.setSpacing(15)
+        btn_row.setSpacing(20)
 
         btn_add = QPushButton("SCAN NEW KEY")
-        btn_add.setFont(QFont("Segoe UI", 16, QFont.Bold))
-        btn_add.setStyleSheet(f"background-color: {THEME['accent_cyan']}; color: white; padding: 15px; border-radius: 8px;")
+        btn_add.setFont(QFont("Segoe UI", 20, QFont.Bold))
+        btn_add.setMinimumHeight(85)
+        btn_add.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {THEME['accent_cyan']};
+                color: white;
+                border-radius: 14px;
+                border: 2px solid #006699;
+            }}
+            QPushButton:pressed {{
+                background-color: #006699;
+            }}
+        """)
         btn_add.clicked.connect(self._start_scan_key)
 
         btn_del = QPushButton("DELETE SELECTED")
-        btn_del.setFont(QFont("Segoe UI", 16, QFont.Bold))
-        btn_del.setStyleSheet("background-color: #ddd; color: #333; padding: 15px; border-radius: 8px; border: 1px solid #bbb;")
+        btn_del.setFont(QFont("Segoe UI", 20, QFont.Bold))
+        btn_del.setMinimumHeight(85)
+        btn_del.setStyleSheet("""
+            QPushButton {{
+                background-color: #ddd;
+                color: #333;
+                border-radius: 14px;
+                border: 2px solid #bbb;
+            }}
+            QPushButton:pressed {{
+                background-color: #bbb;
+            }}
+        """)
         btn_del.clicked.connect(self._delete_selected_key)
 
         btn_row.addWidget(btn_add)
@@ -278,8 +358,8 @@ class SettingsHubPage(QWidget):
 
     def _start_scan_key(self):
         self.cb['start_add_key_mode']()
-        self.lbl_access_status.setText("WAITING FOR CARD... TAP ON READER")
-        self.lbl_access_status.setStyleSheet(f"color: {THEME['accent_amber']}; font-weight: bold; font-size: 16px;")
+        self.lbl_access_status.setText("WAITING FOR CARD... TAP ON READER ⬆️")
+        self.lbl_access_status.setStyleSheet(f"color: {THEME['accent_amber']}; font-weight: bold; font-size: 22px;")
 
     def _delete_selected_key(self):
         selected = self.list_keys.selectedItems()
@@ -289,15 +369,15 @@ class SettingsHubPage(QWidget):
         key_str = selected[0].text().replace("Card UID: ", "").strip()
         confirm = QMessageBox()
         confirm.setIcon(QMessageBox.Warning)
-        confirm.setText(f"Delete authorized key: {key_str}?")
+        confirm.setText(f"Delete authorized key:\n{key_str}?")
         confirm.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        confirm.setStyleSheet("background-color: #fff; color: black;")
+        confirm.setStyleSheet("background-color: #fff; color: black; font-size: 18px;")
 
         if confirm.exec_() == QMessageBox.Yes:
             self.storage.delete_authorized_key(key_str)
             self.refresh_key_list()
-            self.lbl_access_status.setText(f"Deleted key {key_str}")
-            self.lbl_access_status.setStyleSheet("color: #666;")
+            self.lbl_access_status.setText(f"Deleted key: {key_str}")
+            self.lbl_access_status.setStyleSheet("color: #666; font-size: 20px;")
 
     # ==========================================
     #   TAB 3: SYSTEM DIAGNOSTICS
@@ -305,10 +385,10 @@ class SettingsHubPage(QWidget):
     def _setup_diagnostics_ui(self, parent):
         layout = QVBoxLayout(parent)
         layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(15)
+        layout.setSpacing(16)
 
         header = QLabel("SYSTEM DIAGNOSTICS")
-        header.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        header.setFont(QFont("Segoe UI", 32, QFont.Bold))
         header.setStyleSheet(f"color: {THEME['accent_amber']};")
         layout.addWidget(header)
 
@@ -317,18 +397,43 @@ class SettingsHubPage(QWidget):
         self.diag_table.setHorizontalHeaderLabels(["Sensor", "Value", "Status"])
         self.diag_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.diag_table.verticalHeader().setVisible(False)
+        self.diag_table.verticalHeader().setDefaultSectionSize(48)
         self.diag_table.setStyleSheet("""
-            QTableWidget {{ background-color: #fff; color: #000; font-size: 15px; border: 1px solid #ccc; }}
-            QHeaderView::section {{ background-color: #eee; padding: 6px; font-weight: bold; border: 1px solid #ccc; }}
+            QTableWidget {{
+                background-color: #fff;
+                color: #111;
+                font-size: 20px;
+                font-weight: bold;
+                border: 2px solid #ccc;
+                border-radius: 12px;
+                gridline-color: #eee;
+            }}
+            QHeaderView::section {{
+                background-color: #e5e7eb;
+                padding: 10px;
+                font-size: 20px;
+                font-weight: bold;
+                border: 1px solid #d1d5db;
+            }}
+            QTableWidget::item {{
+                padding: 6px;
+            }}
         """)
 
         self.diag_rows = list(SENSOR_NAMES) + ["Temperature", "Humidity", "NFC System"]
         self.diag_table.setRowCount(len(self.diag_rows))
 
         for i, name in enumerate(self.diag_rows):
-            self.diag_table.setItem(i, 0, QTableWidgetItem(name))
-            self.diag_table.setItem(i, 1, QTableWidgetItem("--"))
-            self.diag_table.setItem(i, 2, QTableWidgetItem("Init"))
+            item_name = QTableWidgetItem(name)
+            item_val = QTableWidgetItem("--")
+            item_stat = QTableWidgetItem("Init")
+
+            item_val.setTextAlignment(Qt.AlignCenter)
+            item_stat.setTextAlignment(Qt.AlignCenter)
+
+            self.diag_table.setItem(i, 0, item_name)
+            self.diag_table.setItem(i, 1, item_val)
+            self.diag_table.setItem(i, 2, item_stat)
 
         layout.addWidget(self.diag_table)
 
@@ -339,7 +444,7 @@ class SettingsHubPage(QWidget):
             val = f"{dist:.1f} cm"
             if dist == 0.0:
                 status = "CLEAR / NO ECHO"
-                color = QColor(100, 100, 100)
+                color = QColor(120, 120, 120)
             elif dist < 30.0:
                 status = "CRITICAL"
                 color = QColor(220, 0, 0)
@@ -359,12 +464,14 @@ class SettingsHubPage(QWidget):
         h = temp_data.get("h", 0.0)
         self.diag_table.item(8, 1).setText(f"{t:.1f} °C")
         self.diag_table.item(8, 2).setText("OK" if t > 0 else "OFFLINE")
+        self.diag_table.item(8, 2).setForeground(QColor(0, 160, 0) if t > 0 else QColor(220, 0, 0))
+
         self.diag_table.item(9, 1).setText(f"{h:.1f} %")
         self.diag_table.item(9, 2).setText("OK" if h > 0 else "OFFLINE")
+        self.diag_table.item(9, 2).setForeground(QColor(0, 160, 0) if h > 0 else QColor(220, 0, 0))
 
         # NFC Reader Status
         nfc_stat = "ACTIVE" if nfc_online else "ERROR"
         self.diag_table.item(10, 1).setText("SPI 50kHz")
         self.diag_table.item(10, 2).setText(nfc_stat)
         self.diag_table.item(10, 2).setForeground(QColor(0, 160, 0) if nfc_online else QColor(220, 0, 0))
-

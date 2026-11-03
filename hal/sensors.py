@@ -33,16 +33,20 @@ class SensorArray:
             self._init_mock()
 
     def _init_hardware(self):
-        # 1. Ultrasonic Trigger Setup
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(PIN_TRIG, GPIO.OUT, initial=GPIO.LOW)
+        try:
+            # 1. Ultrasonic Trigger Setup
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(PIN_TRIG, GPIO.OUT, initial=GPIO.LOW)
 
-        # 2. Ultrasonic Echo Setup via gpiozero callbacks
-        for idx, pin in enumerate(PINS_ECHO):
-            device = DigitalInputDevice(pin, pull_up=False)
-            device.when_activated = lambda i=idx: self._on_echo_rise(i)
-            device.when_deactivated = lambda i=idx: self._on_echo_fall(i)
-            self.echo_devices.append(device)
+            # 2. Ultrasonic Echo Setup via gpiozero callbacks
+            for idx, pin in enumerate(PINS_ECHO):
+                device = DigitalInputDevice(pin, pull_up=False)
+                device.when_activated = lambda i=idx: self._on_echo_rise(i)
+                device.when_deactivated = lambda i=idx: self._on_echo_fall(i)
+                self.echo_devices.append(device)
+        except Exception as e:
+            print(f"Warning: Failed to claim ultrasonic GPIO pins ({e}). Falling back to simulation.")
+            self._init_mock()
 
         # 3. DHT11 Setup
         try:
