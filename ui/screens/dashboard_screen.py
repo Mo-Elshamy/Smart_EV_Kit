@@ -42,13 +42,13 @@ class DashboardPage(QWidget):
         # Clock & Date
         self.lbl_clock = QLabel("--:--")
         self.lbl_clock.setAlignment(Qt.AlignCenter)
-        self.lbl_clock.setFont(QFont("Segoe UI", 40, QFont.Bold))
+        self.lbl_clock.setFont(QFont("Segoe UI", 48, QFont.Bold))
         self.lbl_clock.setStyleSheet(f"color: {THEME['text_main']};")
         self.lbl_clock.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.lbl_date = QLabel("--/--")
         self.lbl_date.setAlignment(Qt.AlignCenter)
-        self.lbl_date.setFont(QFont("Segoe UI", 16))
+        self.lbl_date.setFont(QFont("Segoe UI", 18, QFont.Bold))
         self.lbl_date.setStyleSheet(f"color: {THEME['accent_cyan']}; letter-spacing: 2px;")
         self.lbl_date.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -63,7 +63,7 @@ class DashboardPage(QWidget):
         # Temp & Humidity
         self.lbl_temp = QLabel("24°C  50%")
         self.lbl_temp.setAlignment(Qt.AlignCenter)
-        self.lbl_temp.setFont(QFont("Segoe UI", 24))
+        self.lbl_temp.setFont(QFont("Segoe UI", 28, QFont.Bold))
         self.lbl_temp.setStyleSheet(f"color: {THEME['text_main']};")
         self.lbl_temp.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         right_layout.addWidget(self.lbl_temp)
@@ -71,28 +71,28 @@ class DashboardPage(QWidget):
         # Authenticated User ID
         self.lbl_user = QLabel("Welcome User")
         self.lbl_user.setAlignment(Qt.AlignCenter)
-        self.lbl_user.setFont(QFont("Segoe UI", 15, QFont.Bold))
+        self.lbl_user.setFont(QFont("Segoe UI", 18, QFont.Bold))
         self.lbl_user.setStyleSheet(f"color: {THEME['accent_green']}; margin-top: 4px;")
         self.lbl_user.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         right_layout.addWidget(self.lbl_user)
 
         right_layout.addStretch(1)
 
-        # Main Driving Icon Buttons Grid
+        # Main Driving Icon Buttons Grid (Enlarged for touch)
         btn_grid = QGridLayout()
-        btn_grid.setSpacing(10)
+        btn_grid.setSpacing(12)
 
         self.btn_lights = create_icon_button("💡", self._on_lights_clicked)
-        self.btn_lights.setFont(QFont("Segoe UI", 44))
-        self.btn_lights.setMinimumHeight(110)
+        self.btn_lights.setFont(QFont("Segoe UI", 60))
+        self.btn_lights.setMinimumHeight(135)
 
         self.btn_reverse = create_icon_button("R", self._on_reverse_clicked, is_reverse=True)
-        self.btn_reverse.setFont(QFont("Segoe UI", 44, QFont.Bold))
-        self.btn_reverse.setMinimumHeight(110)
+        self.btn_reverse.setFont(QFont("Segoe UI", 60, QFont.Bold))
+        self.btn_reverse.setMinimumHeight(135)
 
         self.btn_lock = create_icon_button("🔒", self._on_lock_clicked, is_red=True)
-        self.btn_lock.setFont(QFont("Segoe UI", 44))
-        self.btn_lock.setMinimumHeight(110)
+        self.btn_lock.setFont(QFont("Segoe UI", 60))
+        self.btn_lock.setMinimumHeight(135)
 
         btn_grid.addWidget(self.btn_lights, 0, 0)
         btn_grid.addWidget(self.btn_reverse, 0, 1)
@@ -101,18 +101,19 @@ class DashboardPage(QWidget):
 
         # Underglow & Settings Row
         config_row = QHBoxLayout()
-        self.btn_body = create_push_button("UNDERGLOW", self._on_body_clicked, min_height=80, font_size=18, checkable=True)
+        config_row.setSpacing(12)
+        self.btn_body = create_push_button("UNDERGLOW", self._on_body_clicked, min_height=95, font_size=22, checkable=True)
         self.btn_body.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         btn_cfg = QPushButton("⚙")
-        btn_cfg.setFixedSize(80, 80)
-        btn_cfg.setFont(QFont("Segoe UI", 36))
+        btn_cfg.setFixedSize(95, 95)
+        btn_cfg.setFont(QFont("Segoe UI", 48))
         btn_cfg.setStyleSheet(f"""
             QPushButton {{
                 background-color: #ddd;
                 color: #333;
-                border-radius: 8px;
-                border: 1px solid #ccc;
+                border-radius: 14px;
+                border: 2px solid #bbb;
             }}
             QPushButton:pressed {{
                 background-color: #bbb;

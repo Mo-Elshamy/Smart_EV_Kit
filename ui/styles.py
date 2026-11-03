@@ -50,9 +50,9 @@ def create_push_button(text, on_click=None, min_height=60, font_size=12, checkab
 def create_icon_button(icon_text, on_click=None, is_red=False, is_reverse=False):
     """Creates large icon buttons for Driving Controls (Headlights, Reverse, Lock)."""
     btn = QPushButton(icon_text)
-    btn.setFont(QFont("Segoe UI", 48))
+    btn.setFont(QFont("Segoe UI", 58))
     btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-    btn.setMinimumSize(80, 80)
+    btn.setMinimumSize(110, 110)
     btn.setCheckable(not is_red)
 
     if is_red:
@@ -66,13 +66,13 @@ def create_icon_button(icon_text, on_click=None, is_red=False, is_reverse=False)
         QPushButton {{
             background-color: #444444;
             color: white;
-            border-radius: 15px;
-            border: 2px solid #666666;
+            border-radius: 18px;
+            border: 3px solid #666666;
         }}
         QPushButton:checked {{
             background-color: {active_color};
             color: black;
-            border: 2px solid white;
+            border: 3px solid white;
         }}
         QPushButton:pressed {{
             background-color: #666666;
@@ -86,8 +86,8 @@ def create_icon_button(icon_text, on_click=None, is_red=False, is_reverse=False)
 def create_turn_button(arrow_text, on_click=None, is_hazard=False):
     """Creates turn signal & hazard warning buttons."""
     btn = QPushButton(arrow_text)
-    btn.setFont(QFont("Segoe UI", 26, QFont.Bold))
-    btn.setMinimumHeight(120)
+    btn.setFont(QFont("Segoe UI", 56, QFont.Bold))
+    btn.setMinimumHeight(145)
     btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
     btn.setCheckable(True)
 
@@ -96,10 +96,10 @@ def create_turn_button(arrow_text, on_click=None, is_hazard=False):
 
     btn.setStyleSheet(f"""
         QPushButton {{
-            background-color: rgba(255, 255, 255, 0.65);
+            background-color: rgba(255, 255, 255, 0.70);
             color: {text_color};
-            border-radius: 10px;
-            border: 2px solid {text_color};
+            border-radius: 15px;
+            border: 3px solid {text_color};
         }}
         QPushButton:checked {{
             background-color: {color};
