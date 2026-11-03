@@ -80,3 +80,4 @@ class CarHardware:
             except Exception:
                 pass
         print("Hardware cleanup complete.")
+

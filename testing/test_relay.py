@@ -6,7 +6,11 @@ Tests:
   - Relay 2: Reverse (GPIO 15, Physical Pin 10)
 Note: Active Low Logic (LOW = ON / Energized, HIGH = OFF / Isolated)
 """
+import sys
+import os
 import time
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import RPi.GPIO as GPIO
 from config import PIN_RELAYS
 

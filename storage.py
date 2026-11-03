@@ -109,3 +109,4 @@ class StorageManager:
     def set_interior_mode(self, mode):
         self.settings["interior_mode"] = str(mode)
         self.save_settings()
+

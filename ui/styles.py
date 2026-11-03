@@ -112,3 +112,4 @@ def create_turn_button(arrow_text, on_click=None, is_hazard=False):
     if on_click:
         btn.clicked.connect(on_click)
     return btn
+

@@ -1,6 +1,10 @@
+import sys
+import os
+import time
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522, MFRC522
-import time
 from config import PIN_NFC_RST, NFC_SPI_SAFE_SPEED_HZ
 
 def hard_reset():

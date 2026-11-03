@@ -195,3 +195,4 @@ class ConfirmLockPage(QWidget):
         btn_row.addWidget(btn_yes)
         layout.addLayout(btn_row)
         layout.addSpacing(40)
+

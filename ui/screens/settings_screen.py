@@ -367,3 +367,4 @@ class SettingsHubPage(QWidget):
         self.diag_table.item(10, 1).setText("SPI 50kHz")
         self.diag_table.item(10, 2).setText(nfc_stat)
         self.diag_table.item(10, 2).setForeground(QColor(0, 160, 0) if nfc_online else QColor(220, 0, 0))
+

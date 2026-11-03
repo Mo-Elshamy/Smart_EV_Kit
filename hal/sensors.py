@@ -132,3 +132,4 @@ class SensorArray:
                 self.dht_device.exit()
             except Exception:
                 pass
+

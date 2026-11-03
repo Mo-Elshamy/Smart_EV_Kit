@@ -97,3 +97,4 @@ class NFCManager:
 
     def cleanup(self):
         self.running = False
+

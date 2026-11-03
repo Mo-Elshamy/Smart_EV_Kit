@@ -2,3 +2,4 @@
 from ui.main_window import EVSystem
 
 __all__ = ["EVSystem"]
+

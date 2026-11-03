@@ -103,3 +103,4 @@ class ActuatorController:
             # Turn off all relays
             for pin in PIN_RELAYS:
                 GPIO.output(pin, GPIO.HIGH)
+

@@ -1,7 +1,10 @@
+import sys
+import os
 import time
 import argparse
-from rpi_ws281x import PixelStrip, Color
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from rpi_ws281x import PixelStrip, Color
 from config import (
     LED_TOTAL as LED_COUNT, PIN_LED_DATA as LED_PIN,
     LED_FREQ_HZ, LED_DMA, LED_BRIGHTNESS, LED_INVERT, LED_CHANNEL

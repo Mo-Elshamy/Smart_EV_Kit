@@ -191,3 +191,4 @@ class ParkingVisualizer(QWidget):
             painter.drawArc(-d3 // 2, -d3 // 2, d3, d3, start, span)
 
         painter.restore()
+

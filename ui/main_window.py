@@ -196,3 +196,4 @@ class EVSystem(QMainWindow):
     def closeEvent(self, event):
         self.car.cleanup()
         event.accept()
+

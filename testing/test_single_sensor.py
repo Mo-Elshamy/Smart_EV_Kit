@@ -3,7 +3,11 @@
 
 Tests Echo 1 (Front Left, GPIO 17) and Trigger (GPIO 23).
 """
+import sys
+import os
 import time
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from gpiozero import DistanceSensor
 from config import PIN_TRIG, PINS_ECHO
 

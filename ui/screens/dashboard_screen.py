@@ -180,3 +180,4 @@ class DashboardPage(QWidget):
         self.btn_left.setChecked(False)
         self.btn_haz.setChecked(False)
         self.btn_right.setChecked(False)
+

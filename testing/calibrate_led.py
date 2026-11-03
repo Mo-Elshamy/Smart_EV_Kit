@@ -7,14 +7,10 @@ Must be run with sudo for direct DMA/PWM access: sudo python3 calibrate_led.py
 import sys
 import os
 import time
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-try:
-    from hal.lighting import LightingSystem
-    from config import LEDS_FRONT_COUNT, LEDS_INTERIOR_COUNT, LEDS_BACK_COUNT, LED_TOTAL
-except ImportError:
-    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-    from hal.lighting import LightingSystem
-    from config import LEDS_FRONT_COUNT, LEDS_INTERIOR_COUNT, LEDS_BACK_COUNT, LED_TOTAL
+from hal.lighting import LightingSystem
+from config import LEDS_FRONT_COUNT, LEDS_INTERIOR_COUNT, LEDS_BACK_COUNT, LED_TOTAL
 
 
 def main():
