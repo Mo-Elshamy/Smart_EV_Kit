@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.lgd-nfy*
+.DS_Store
+desktop.ini
