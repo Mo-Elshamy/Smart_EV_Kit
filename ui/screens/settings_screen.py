@@ -23,26 +23,26 @@ class SettingsHubPage(QWidget):
 
         # --- LEFT MENU (Enlarged) ---
         menu_frame = QFrame()
-        menu_frame.setFixedWidth(320)
+        menu_frame.setFixedWidth(340)
         menu_frame.setStyleSheet(f"""
             QFrame {{
                 background-color: {THEME['menu_bg']};
-                border-radius: 15px;
-                border: 1px solid #ccc;
+                border-radius: 16px;
+                border: 2px solid #ccc;
             }}
         """)
         menu_layout = QVBoxLayout(menu_frame)
         menu_layout.setContentsMargins(15, 25, 15, 25)
-        menu_layout.setSpacing(15)
+        menu_layout.setSpacing(18)
 
         lbl_settings = QLabel("SETTINGS")
         lbl_settings.setAlignment(Qt.AlignCenter)
-        lbl_settings.setFont(QFont("Segoe UI", 26, QFont.Bold))
+        lbl_settings.setFont(QFont("Segoe UI", 30, QFont.Bold))
         lbl_settings.setStyleSheet(f"color: {THEME['text_dim']}; margin-bottom: 15px;")
         menu_layout.addWidget(lbl_settings)
 
         self.menu_list = QListWidget()
-        self.menu_list.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        self.menu_list.setFont(QFont("Segoe UI", 24, QFont.Bold))
         self.menu_list.addItem("Light Config")
         self.menu_list.addItem("Access Config")
         self.menu_list.addItem("Diagnostics")
@@ -55,27 +55,27 @@ class SettingsHubPage(QWidget):
                 outline: none;
             }}
             QListWidget::item {{
-                padding: 22px 15px;
+                padding: 24px 18px;
                 color: {THEME['text_main']};
-                border-radius: 10px;
-                margin-bottom: 8px;
+                border-radius: 12px;
+                margin-bottom: 10px;
             }}
             QListWidget::item:selected {{
                 background-color: {THEME['menu_sel']};
                 color: black;
-                border-left: 8px solid {THEME['accent_cyan']};
+                border-left: 10px solid {THEME['accent_cyan']};
             }}
         """)
         menu_layout.addWidget(self.menu_list)
 
-        btn_exit = QPushButton("BACK TO DASH")
-        btn_exit.setFont(QFont("Segoe UI", 20, QFont.Bold))
-        btn_exit.setMinimumHeight(80)
+        btn_exit = QPushButton("⬅ BACK TO DASH")
+        btn_exit.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        btn_exit.setMinimumHeight(95)
         btn_exit.setStyleSheet("""
             QPushButton {{
                 background-color: #ddd;
                 color: #222;
-                border-radius: 12px;
+                border-radius: 14px;
                 border: 2px solid #bbb;
             }}
             QPushButton:pressed {{
@@ -188,9 +188,9 @@ class SettingsHubPage(QWidget):
         presets = [("ICE", 0, 255, 255), ("RED", 255, 0, 0), ("GRN", 0, 255, 0), ("BLU", 0, 0, 255)]
         for idx, (name, r, g, b) in enumerate(presets):
             btn = QPushButton(name)
-            btn.setFont(QFont("Segoe UI", 20, QFont.Bold))
+            btn.setFont(QFont("Segoe UI", 22, QFont.Bold))
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setMinimumHeight(85)
+            btn.setMinimumHeight(95)
             btn.setStyleSheet(f"""
                 QPushButton {{
                     background-color: rgb({r},{g},{b});
@@ -217,8 +217,8 @@ class SettingsHubPage(QWidget):
             btn.setCheckable(True)
             btn.setAutoExclusive(True)
             btn.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-            btn.setMinimumHeight(85)
-            btn.setFont(QFont("Segoe UI", 20, QFont.Bold))
+            btn.setMinimumHeight(95)
+            btn.setFont(QFont("Segoe UI", 22, QFont.Bold))
             if mode == saved_mode:
                 btn.setChecked(True)
             btn.setStyleSheet(f"""
@@ -269,61 +269,75 @@ class SettingsHubPage(QWidget):
         self.cb['set_interior_mode'](mode)
 
     # ==========================================
-    #   TAB 2: ACCESS CONTROL
+    #   TAB 2: ACCESS CONTROL (Enlarged)
     # ==========================================
     def _setup_access_config_ui(self, parent):
         layout = QVBoxLayout(parent)
         layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(18)
+        layout.setSpacing(20)
 
         header = QLabel("ACCESS CONTROL")
-        header.setFont(QFont("Segoe UI", 32, QFont.Bold))
+        header.setFont(QFont("Segoe UI", 36, QFont.Bold))
         header.setStyleSheet(f"color: {THEME['accent_green']};")
         layout.addWidget(header)
 
         self.list_keys = QListWidget()
+        self.list_keys.setFont(QFont("Segoe UI", 28, QFont.Bold))
         self.list_keys.setStyleSheet("""
-            QListWidget {{
-                background-color: #fff;
-                color: #111;
-                font-size: 22px;
+            QListWidget {
+                background-color: #ffffff;
+                color: #111111;
+                font-size: 28px;
                 font-weight: bold;
-                border: 2px solid #ccc;
+                border: 3px solid #94a3b8;
+                border-radius: 16px;
+                padding: 12px;
+            }
+            QListWidget::item {
+                padding: 24px 20px;
+                border-bottom: 2px solid #e2e8f0;
+                min-height: 50px;
+            }
+            QListWidget::item:selected {
+                background-color: #0284c7;
+                color: #ffffff;
                 border-radius: 12px;
-                padding: 10px;
-            }}
-            QListWidget::item {{
-                padding: 18px;
-                border-bottom: 1px solid #eee;
-            }}
-            QListWidget::item:selected {{
-                background-color: #e0f2fe;
-                color: #0369a1;
-                border-radius: 8px;
-            }}
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #f1f5f9;
+                width: 26px;
+                border-radius: 13px;
+            }
+            QScrollBar::handle:vertical {
+                background: #94a3b8;
+                min-height: 40px;
+                border-radius: 13px;
+            }
         """)
         self.refresh_key_list()
-        layout.addWidget(self.list_keys)
+        layout.addWidget(self.list_keys, 1)
 
         self.lbl_access_status = QLabel("Status: Ready")
         self.lbl_access_status.setAlignment(Qt.AlignCenter)
-        self.lbl_access_status.setFont(QFont("Segoe UI", 22, QFont.Bold))
-        self.lbl_access_status.setStyleSheet("color: #666; font-style: italic;")
-        self.lbl_access_status.setMinimumHeight(45)
+        self.lbl_access_status.setFont(QFont("Segoe UI", 26, QFont.Bold))
+        self.lbl_access_status.setStyleSheet("color: #334155; background-color: #f1f5f9; border-radius: 14px; border: 2px solid #cbd5e1; padding: 12px;")
+        self.lbl_access_status.setMinimumHeight(75)
         layout.addWidget(self.lbl_access_status)
 
         btn_row = QHBoxLayout()
         btn_row.setSpacing(20)
 
-        btn_add = QPushButton("SCAN NEW KEY")
-        btn_add.setFont(QFont("Segoe UI", 20, QFont.Bold))
-        btn_add.setMinimumHeight(85)
+        btn_add = QPushButton("SCAN NEW KEY ⬆️")
+        btn_add.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        btn_add.setMinimumHeight(100)
         btn_add.setStyleSheet(f"""
             QPushButton {{
                 background-color: {THEME['accent_cyan']};
                 color: white;
-                border-radius: 14px;
+                border-radius: 16px;
                 border: 2px solid #006699;
+                padding: 15px;
             }}
             QPushButton:pressed {{
                 background-color: #006699;
@@ -331,18 +345,19 @@ class SettingsHubPage(QWidget):
         """)
         btn_add.clicked.connect(self._start_scan_key)
 
-        btn_del = QPushButton("DELETE SELECTED")
-        btn_del.setFont(QFont("Segoe UI", 20, QFont.Bold))
-        btn_del.setMinimumHeight(85)
+        btn_del = QPushButton("DELETE SELECTED 🗑️")
+        btn_del.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        btn_del.setMinimumHeight(100)
         btn_del.setStyleSheet("""
             QPushButton {{
-                background-color: #ddd;
-                color: #333;
-                border-radius: 14px;
-                border: 2px solid #bbb;
+                background-color: #e2e8f0;
+                color: #1e293b;
+                border-radius: 16px;
+                border: 2px solid #94a3b8;
+                padding: 15px;
             }}
             QPushButton:pressed {{
-                background-color: #bbb;
+                background-color: #cbd5e1;
             }}
         """)
         btn_del.clicked.connect(self._delete_selected_key)
@@ -353,82 +368,107 @@ class SettingsHubPage(QWidget):
 
     def refresh_key_list(self):
         self.list_keys.clear()
+        font = QFont("Segoe UI", 28, QFont.Bold)
         for key in self.storage.authorized_keys:
-            self.list_keys.addItem(f"Card UID: {key}")
+            from PyQt5.QtWidgets import QListWidgetItem
+            item = QListWidgetItem(f"💳   Card UID:   {key}")
+            item.setFont(font)
+            self.list_keys.addItem(item)
 
     def _start_scan_key(self):
         self.cb['start_add_key_mode']()
         self.lbl_access_status.setText("WAITING FOR CARD... TAP ON READER ⬆️")
-        self.lbl_access_status.setStyleSheet(f"color: {THEME['accent_amber']}; font-weight: bold; font-size: 22px;")
+        self.lbl_access_status.setStyleSheet(f"color: {THEME['accent_amber']}; background-color: #fef3c7; border: 2px solid #f59e0b; border-radius: 14px; font-weight: bold; font-size: 26px; padding: 12px;")
 
     def _delete_selected_key(self):
         selected = self.list_keys.selectedItems()
         if not selected:
             return
 
-        key_str = selected[0].text().replace("Card UID: ", "").strip()
+        key_str = selected[0].text().replace("💳   Card UID:   ", "").strip()
         confirm = QMessageBox()
         confirm.setIcon(QMessageBox.Warning)
-        confirm.setText(f"Delete authorized key:\n{key_str}?")
+        confirm.setText(f"Delete authorized key:\n\n{key_str}?")
         confirm.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-        confirm.setStyleSheet("background-color: #fff; color: black; font-size: 18px;")
+        confirm.setStyleSheet("background-color: #fff; color: black; font-size: 24px; font-weight: bold;")
 
         if confirm.exec_() == QMessageBox.Yes:
             self.storage.delete_authorized_key(key_str)
             self.refresh_key_list()
             self.lbl_access_status.setText(f"Deleted key: {key_str}")
-            self.lbl_access_status.setStyleSheet("color: #666; font-size: 20px;")
+            self.lbl_access_status.setStyleSheet("color: #475569; background-color: #f1f5f9; border-radius: 14px; border: 2px solid #cbd5e1; font-size: 24px; padding: 12px;")
 
     # ==========================================
-    #   TAB 3: SYSTEM DIAGNOSTICS
+    #   TAB 3: SYSTEM DIAGNOSTICS (Enlarged)
     # ==========================================
     def _setup_diagnostics_ui(self, parent):
         layout = QVBoxLayout(parent)
         layout.setContentsMargins(20, 20, 20, 20)
-        layout.setSpacing(16)
+        layout.setSpacing(18)
 
         header = QLabel("SYSTEM DIAGNOSTICS")
-        header.setFont(QFont("Segoe UI", 32, QFont.Bold))
+        header.setFont(QFont("Segoe UI", 36, QFont.Bold))
         header.setStyleSheet(f"color: {THEME['accent_amber']};")
         layout.addWidget(header)
 
         self.diag_table = QTableWidget()
         self.diag_table.setColumnCount(3)
-        self.diag_table.setHorizontalHeaderLabels(["Sensor", "Value", "Status"])
+        self.diag_table.setHorizontalHeaderLabels(["Sensor / Module", "Measured Value", "Status"])
         self.diag_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.diag_table.horizontalHeader().setFont(QFont("Segoe UI", 24, QFont.Bold))
         self.diag_table.verticalHeader().setVisible(False)
-        self.diag_table.verticalHeader().setDefaultSectionSize(48)
+        self.diag_table.verticalHeader().setDefaultSectionSize(65)
+        self.diag_table.setFont(QFont("Segoe UI", 24, QFont.Bold))
         self.diag_table.setStyleSheet("""
-            QTableWidget {{
-                background-color: #fff;
-                color: #111;
-                font-size: 20px;
+            QTableWidget {
+                background-color: #ffffff;
+                color: #111111;
+                font-size: 26px;
                 font-weight: bold;
-                border: 2px solid #ccc;
-                border-radius: 12px;
-                gridline-color: #eee;
-            }}
-            QHeaderView::section {{
-                background-color: #e5e7eb;
-                padding: 10px;
-                font-size: 20px;
+                border: 3px solid #94a3b8;
+                border-radius: 16px;
+                gridline-color: #e2e8f0;
+            }
+            QHeaderView::section {
+                background-color: #e2e8f0;
+                color: #0f172a;
+                padding: 14px;
+                font-size: 26px;
                 font-weight: bold;
-                border: 1px solid #d1d5db;
-            }}
-            QTableWidget::item {{
-                padding: 6px;
-            }}
+                border: 1px solid #94a3b8;
+            }
+            QTableWidget::item {
+                padding: 8px 14px;
+            }
+            QScrollBar:vertical {
+                border: none;
+                background: #f1f5f9;
+                width: 26px;
+                border-radius: 13px;
+            }
+            QScrollBar::handle:vertical {
+                background: #94a3b8;
+                min-height: 40px;
+                border-radius: 13px;
+            }
         """)
 
         self.diag_rows = list(SENSOR_NAMES) + ["Temperature", "Humidity", "NFC System"]
         self.diag_table.setRowCount(len(self.diag_rows))
 
-        for i, name in enumerate(self.diag_rows):
-            item_name = QTableWidgetItem(name)
-            item_val = QTableWidgetItem("--")
-            item_stat = QTableWidgetItem("Init")
+        font_name = QFont("Segoe UI", 24, QFont.Bold)
+        font_val = QFont("Segoe UI", 26, QFont.Bold)
 
+        for i, name in enumerate(self.diag_rows):
+            item_name = QTableWidgetItem(f"  {name}")
+            item_name.setFont(font_name)
+
+            item_val = QTableWidgetItem("--")
+            item_val.setFont(font_val)
             item_val.setTextAlignment(Qt.AlignCenter)
+
+            item_stat = QTableWidgetItem("Init")
+            item_stat.setFont(font_val)
             item_stat.setTextAlignment(Qt.AlignCenter)
 
             self.diag_table.setItem(i, 0, item_name)
@@ -438,40 +478,63 @@ class SettingsHubPage(QWidget):
         layout.addWidget(self.diag_table)
 
     def update_diagnostics_data(self, distances, temp_data, nfc_online):
+        font_val = QFont("Segoe UI", 26, QFont.Bold)
+
         # 8 ultrasonic sensors
         for i in range(min(8, len(distances))):
             dist = distances[i]
             val = f"{dist:.1f} cm"
             if dist == 0.0:
-                status = "CLEAR / NO ECHO"
-                color = QColor(120, 120, 120)
+                status = "CLEAR"
+                color = QColor(100, 116, 139)
             elif dist < 30.0:
                 status = "CRITICAL"
-                color = QColor(220, 0, 0)
+                color = QColor(220, 38, 38)
             elif dist < 70.0:
                 status = "WARNING"
-                color = QColor(220, 140, 0)
+                color = QColor(217, 119, 6)
             else:
                 status = "OK"
-                color = QColor(0, 160, 0)
+                color = QColor(22, 163, 74)
 
-            self.diag_table.item(i, 1).setText(val)
-            self.diag_table.item(i, 2).setText(status)
-            self.diag_table.item(i, 2).setForeground(color)
+            item_val = self.diag_table.item(i, 1)
+            item_val.setText(val)
+            item_val.setFont(font_val)
+
+            item_stat = self.diag_table.item(i, 2)
+            item_stat.setText(status)
+            item_stat.setFont(font_val)
+            item_stat.setForeground(color)
 
         # Temperature & Humidity
         t = temp_data.get("t", 0.0)
         h = temp_data.get("h", 0.0)
-        self.diag_table.item(8, 1).setText(f"{t:.1f} °C")
-        self.diag_table.item(8, 2).setText("OK" if t > 0 else "OFFLINE")
-        self.diag_table.item(8, 2).setForeground(QColor(0, 160, 0) if t > 0 else QColor(220, 0, 0))
 
-        self.diag_table.item(9, 1).setText(f"{h:.1f} %")
-        self.diag_table.item(9, 2).setText("OK" if h > 0 else "OFFLINE")
-        self.diag_table.item(9, 2).setForeground(QColor(0, 160, 0) if h > 0 else QColor(220, 0, 0))
+        item_t = self.diag_table.item(8, 1)
+        item_t.setText(f"{t:.1f} °C")
+        item_t.setFont(font_val)
+
+        item_stat_t = self.diag_table.item(8, 2)
+        item_stat_t.setText("ONLINE" if t > 0 else "OFFLINE")
+        item_stat_t.setFont(font_val)
+        item_stat_t.setForeground(QColor(22, 163, 74) if t > 0 else QColor(220, 38, 38))
+
+        item_h = self.diag_table.item(9, 1)
+        item_h.setText(f"{h:.1f} %")
+        item_h.setFont(font_val)
+
+        item_stat_h = self.diag_table.item(9, 2)
+        item_stat_h.setText("ONLINE" if h > 0 else "OFFLINE")
+        item_stat_h.setFont(font_val)
+        item_stat_h.setForeground(QColor(22, 163, 74) if h > 0 else QColor(220, 38, 38))
 
         # NFC Reader Status
-        nfc_stat = "ACTIVE" if nfc_online else "ERROR"
-        self.diag_table.item(10, 1).setText("SPI 50kHz")
-        self.diag_table.item(10, 2).setText(nfc_stat)
-        self.diag_table.item(10, 2).setForeground(QColor(0, 160, 0) if nfc_online else QColor(220, 0, 0))
+        nfc_stat = "READY" if nfc_online else "ERROR"
+        item_nfc_v = self.diag_table.item(10, 1)
+        item_nfc_v.setText("SPI 50kHz")
+        item_nfc_v.setFont(font_val)
+
+        item_nfc_s = self.diag_table.item(10, 2)
+        item_nfc_s.setText(nfc_stat)
+        item_nfc_s.setFont(font_val)
+        item_nfc_s.setForeground(QColor(22, 163, 74) if nfc_online else QColor(220, 38, 38))
