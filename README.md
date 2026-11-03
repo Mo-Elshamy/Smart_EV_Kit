@@ -1,12 +1,21 @@
 # RQ EV Car Control System
 
-**Version:** 1.0.0 **Platform:** Raspberry Pi 4 Model B (Bookworm OS)
+**Version:** 2.0.0 (`software_V2.0`) **Platform:** Raspberry Pi 4 Model B (Bookworm OS)
 
 ## 1. Project Overview
 
 The **RQ EV Car Control System** is a centralized Vehicle Control Unit (VCU) designed for electric buggies and educational EV platforms. Built on the Raspberry Pi 4 architecture, it integrates safety sensors, access control, and lighting management into a single, cohesive system.
 
 This project replaces traditional analog car switches with a modern, 7-inch touchscreen interface (`PyQt5`), offering a digital driving experience similar to modern commercial electric vehicles.
+
+### What's New in Version 2.0 (`software_V2.0`)
+* **Modular Architecture:** Refactored into clean modules (`config.py`, `storage.py`, `hal/`, `ui/`, `testing/`).
+* **Operational Lighting Control:** Fixed previous no-op light toggles; Headlights (White), Taillights (Red), and Interior Underglow are independently controllable and auto-shutoff on vehicle lock.
+* **Non-Blocking Progressive Radar Audio:** Progressive buzzer beeping (Slow -> Medium -> Fast -> Solid Tone) based on proximity distance without stalling GUI frame rendering.
+* **Ultrasonic Dead-Zone Fix:** Fixed stuck readings for obstacles closer than 20 cm and added stale echo timeouts.
+* **NFC Noise Immunity:** Integrated GPIO hard-reset pulse and 50kHz safe SPI bus speed to eliminate MISO line noise (`0xB2`).
+* **Persistent Preferences:** Interior RGB colors, lighting patterns, custom PIN codes, and authorized NFC UIDs persist across reboots in `settings.json` and `authorized_keys.txt`.
+* **Improved Touchscreen PIN Pad:** Added single-digit backspace (`⌫`) button alongside cancel.
 
 ### Key Features
 

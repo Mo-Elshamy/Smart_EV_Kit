@@ -1,9 +1,7 @@
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522, MFRC522
 import time
-
-# --- CONFIGURATION ---
-PIN_NFC_RST = 19 # Matches your hardware.py config
+from config import PIN_NFC_RST, NFC_SPI_SAFE_SPEED_HZ
 
 def hard_reset():
     """Manually reset the NFC module via GPIO"""
@@ -34,8 +32,8 @@ def main():
         # 3. Apply Ultra-Safe Mode Speed
         # If your wires are long or loose, 1MHz is too fast.
         # We lower it to 50kHz for maximum stability.
-        if hasattr(reader, 'spi'):
-            reader.spi.max_speed_hz = 50000 
+        if hasattr(reader, 'spi') and reader.spi:
+            reader.spi.max_speed_hz = NFC_SPI_SAFE_SPEED_HZ
             print(f"SPI Speed set to: {reader.spi.max_speed_hz} Hz (Safe Mode)")
             
     except Exception as e:

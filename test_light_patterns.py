@@ -2,15 +2,10 @@ import time
 import argparse
 from rpi_ws281x import PixelStrip, Color
 
-# --- CONFIGURATION ---
-# WS2811/NeoPixel Configuration
-LED_COUNT      = 30      # Number of LED pixels. CHANGE THIS to match your strip length!
-LED_PIN        = 12      # GPIO pin (18 is standard for PWM)
-LED_FREQ_HZ    = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA        = 10      # DMA channel to use for generating signal (try 10)
-LED_BRIGHTNESS = 255     # Set to 0 for darkest and 255 for brightest
-LED_INVERT     = False   # True to invert the signal (when using NPN transistor level shift)
-LED_CHANNEL    = 0       # set to '1' for GPIOs 13, 19, 41, 45 or 53
+from config import (
+    LED_TOTAL as LED_COUNT, PIN_LED_DATA as LED_PIN,
+    LED_FREQ_HZ, LED_DMA, LED_BRIGHTNESS, LED_INVERT, LED_CHANNEL
+)
 
 def setup_strip():
     """Initializes the WS2811 Strip"""
