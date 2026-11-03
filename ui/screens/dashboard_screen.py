@@ -39,44 +39,42 @@ class DashboardPage(QWidget):
         right_layout.setContentsMargins(10, 12, 10, 12)
         right_layout.setSpacing(8)
 
-        # Clock & Date
+        # Clock & Date (Vertically expanded to reach Light and Reverse buttons)
         self.lbl_clock = QLabel("--:--")
         self.lbl_clock.setAlignment(Qt.AlignCenter)
-        self.lbl_clock.setFont(QFont("Segoe UI", 48, QFont.Bold))
+        self.lbl_clock.setFont(QFont("Segoe UI", 72, QFont.Bold))
         self.lbl_clock.setStyleSheet(f"color: {THEME['text_main']};")
         self.lbl_clock.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
         self.lbl_date = QLabel("--/--")
         self.lbl_date.setAlignment(Qt.AlignCenter)
-        self.lbl_date.setFont(QFont("Segoe UI", 18, QFont.Bold))
-        self.lbl_date.setStyleSheet(f"color: {THEME['accent_cyan']}; letter-spacing: 2px;")
+        self.lbl_date.setFont(QFont("Segoe UI", 24, QFont.Bold))
+        self.lbl_date.setStyleSheet(f"color: {THEME['accent_cyan']}; letter-spacing: 3px;")
         self.lbl_date.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-        right_layout.addWidget(self.lbl_clock)
-        right_layout.addWidget(self.lbl_date)
+        right_layout.addWidget(self.lbl_clock, 3)
+        right_layout.addWidget(self.lbl_date, 1)
 
         divider = QFrame()
         divider.setFrameShape(QFrame.HLine)
-        divider.setStyleSheet("color: #ccc;")
+        divider.setStyleSheet("color: #ccc; margin: 4px 0;")
         right_layout.addWidget(divider)
 
-        # Temp & Humidity
+        # Temp & Humidity (Large high-contrast display)
         self.lbl_temp = QLabel("24°C  50%")
         self.lbl_temp.setAlignment(Qt.AlignCenter)
-        self.lbl_temp.setFont(QFont("Segoe UI", 28, QFont.Bold))
+        self.lbl_temp.setFont(QFont("Segoe UI", 42, QFont.Bold))
         self.lbl_temp.setStyleSheet(f"color: {THEME['text_main']};")
         self.lbl_temp.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        right_layout.addWidget(self.lbl_temp)
+        right_layout.addWidget(self.lbl_temp, 2)
 
         # Authenticated User ID
         self.lbl_user = QLabel("Welcome User")
         self.lbl_user.setAlignment(Qt.AlignCenter)
-        self.lbl_user.setFont(QFont("Segoe UI", 18, QFont.Bold))
+        self.lbl_user.setFont(QFont("Segoe UI", 22, QFont.Bold))
         self.lbl_user.setStyleSheet(f"color: {THEME['accent_green']}; margin-top: 4px;")
         self.lbl_user.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        right_layout.addWidget(self.lbl_user)
-
-        right_layout.addStretch(1)
+        right_layout.addWidget(self.lbl_user, 1)
 
         # Main Driving Icon Buttons Grid (Enlarged for touch)
         btn_grid = QGridLayout()
