@@ -5,3 +5,6 @@ __pycache__/
 .DS_Store
 desktop.ini
 
+# Vehicle-specific keys & access control
+authorized_keys.txt
+
