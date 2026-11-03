@@ -6,8 +6,12 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 KEY_FILE = os.path.join(BASE_DIR, "authorized_keys.txt")
 SETTINGS_FILE = os.path.join(BASE_DIR, "settings.json")
-BG_PNG_PATH = os.path.join(BASE_DIR, "background.png")
-BG_JPG_PATH = os.path.join(BASE_DIR, "background.jpg")
+
+# Assets Directory
+ASSETS_DIR = os.path.join(BASE_DIR, "assets")
+LOGO_PNG_PATH = os.path.join(ASSETS_DIR, "logo.png")
+BG_PNG_PATH = os.path.join(ASSETS_DIR, "background.png")
+BG_JPG_PATH = os.path.join(ASSETS_DIR, "background.jpg")
 
 # ==========================================
 #   LED STRIP CONFIGURATION (WS2811)

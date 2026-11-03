@@ -1,14 +1,15 @@
+import os
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QGridLayout, QLabel, QPushButton, QSizePolicy
 )
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QFont
-from config import THEME
+from PyQt5.QtGui import QFont, QPixmap
+from config import THEME, LOGO_PNG_PATH, BG_PNG_PATH
 from ui.styles import apply_background
 
 
 class LockScreenPage(QWidget):
-    """The default locked idle screen."""
+    """The default locked idle screen with brand logo."""
 
     def __init__(self, on_enter_pin, parent=None):
         super().__init__(parent)
@@ -18,10 +19,23 @@ class LockScreenPage(QWidget):
         lbl_welcome = QLabel("Welcome to RQ EV Car")
         lbl_welcome.setAlignment(Qt.AlignCenter)
         lbl_welcome.setFont(QFont("Segoe UI", 36, QFont.Bold))
-        lbl_welcome.setStyleSheet("color: black; margin-top: 40px;")
+        lbl_welcome.setStyleSheet("color: black; margin-top: 30px;")
         layout.addWidget(lbl_welcome)
 
-        layout.addStretch()
+        layout.addStretch(1)
+
+        # Prominent Brand Logo
+        self.lbl_logo = QLabel()
+        self.lbl_logo.setAlignment(Qt.AlignCenter)
+        logo_path = LOGO_PNG_PATH if os.path.exists(LOGO_PNG_PATH) else BG_PNG_PATH
+        self.orig_logo_pixmap = QPixmap(logo_path) if os.path.exists(logo_path) else QPixmap()
+        if not self.orig_logo_pixmap.isNull():
+            self.lbl_logo.setPixmap(
+                self.orig_logo_pixmap.scaled(650, 220, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
+        layout.addWidget(self.lbl_logo)
+
+        layout.addStretch(1)
 
         bot_row = QHBoxLayout()
         btn_pass = QPushButton("ENTER PIN")
@@ -61,6 +75,15 @@ class LockScreenPage(QWidget):
 
         layout.addLayout(bot_row)
         layout.addSpacing(30)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if hasattr(self, 'orig_logo_pixmap') and not self.orig_logo_pixmap.isNull():
+            target_w = min(int(self.width() * 0.70), 750)
+            target_h = min(int(self.height() * 0.40), 250)
+            self.lbl_logo.setPixmap(
+                self.orig_logo_pixmap.scaled(target_w, target_h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
 
 
 class PinScreenPage(QWidget):

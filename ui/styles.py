@@ -1,21 +1,18 @@
 import os
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QPushButton, QSizePolicy
 from config import THEME, BG_PNG_PATH, BG_JPG_PATH
 
 
 def apply_background(widget):
-    """Apply PNG or JPG background image to a QWidget if available."""
+    """Apply background styling to a QWidget."""
+    widget.setAttribute(Qt.WA_StyledBackground, True)
     widget.setObjectName("bg_widget")
     bg_style = f"background-color: {THEME['bg_dark']};"
 
-    if os.path.exists(BG_PNG_PATH):
-        bg_style += f" border-image: url({BG_PNG_PATH.replace(os.sep, '/')}) 0 0 0 0 stretch stretch;"
-    elif os.path.exists(BG_JPG_PATH):
-        bg_style += f" border-image: url({BG_JPG_PATH.replace(os.sep, '/')}) 0 0 0 0 stretch stretch;"
-
     widget.setStyleSheet(f"""
-        QWidget#bg_widget {{ {bg_style} }}
+        #bg_widget {{ {bg_style} }}
         QLabel {{ background: transparent; color: {THEME['text_main']}; font-family: 'Segoe UI'; }}
     """)
 
