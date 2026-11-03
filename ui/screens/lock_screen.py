@@ -24,15 +24,13 @@ class LockScreenPage(QWidget):
 
         layout.addStretch(1)
 
-        # Prominent Brand Logo
+        # Prominent Brand Logo (fills the screen width)
         self.lbl_logo = QLabel()
         self.lbl_logo.setAlignment(Qt.AlignCenter)
+        self.lbl_logo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         logo_path = LOGO_PNG_PATH if os.path.exists(LOGO_PNG_PATH) else BG_PNG_PATH
         self.orig_logo_pixmap = QPixmap(logo_path) if os.path.exists(logo_path) else QPixmap()
-        if not self.orig_logo_pixmap.isNull():
-            self.lbl_logo.setPixmap(
-                self.orig_logo_pixmap.scaled(650, 220, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            )
+        self._update_logo_size()
         layout.addWidget(self.lbl_logo)
 
         layout.addStretch(1)
@@ -76,14 +74,19 @@ class LockScreenPage(QWidget):
         layout.addLayout(bot_row)
         layout.addSpacing(30)
 
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
+    def _update_logo_size(self):
         if hasattr(self, 'orig_logo_pixmap') and not self.orig_logo_pixmap.isNull():
-            target_w = min(int(self.width() * 0.70), 750)
-            target_h = min(int(self.height() * 0.40), 250)
+            w = self.width() if self.width() > 100 else 1920
+            h = self.height() if self.height() > 100 else 1080
+            target_w = max(300, int(w * 0.92))
+            target_h = max(100, int(h * 0.58))
             self.lbl_logo.setPixmap(
                 self.orig_logo_pixmap.scaled(target_w, target_h, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             )
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._update_logo_size()
 
 
 class PinScreenPage(QWidget):
