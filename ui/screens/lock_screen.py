@@ -9,22 +9,66 @@ from ui.styles import apply_background
 
 
 class LockScreenPage(QWidget):
-    """The default locked idle screen with brand logo."""
+    """The default locked idle screen with brand logo and upper-right controls."""
 
     def __init__(self, on_enter_pin, parent=None):
         super().__init__(parent)
         apply_background(self)
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(40, 30, 40, 30)
+
+        # Top Bar: Welcome Title (Left) + Enter PIN & Scan Card (Upper Right)
+        top_bar = QHBoxLayout()
+        top_bar.setSpacing(20)
 
         lbl_welcome = QLabel("Welcome to RQ EV Car")
-        lbl_welcome.setAlignment(Qt.AlignCenter)
+        lbl_welcome.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         lbl_welcome.setFont(QFont("Segoe UI", 36, QFont.Bold))
-        lbl_welcome.setStyleSheet("color: black; margin-top: 30px;")
-        layout.addWidget(lbl_welcome)
+        lbl_welcome.setStyleSheet("color: black;")
+        top_bar.addWidget(lbl_welcome)
+
+        top_bar.addStretch(1)
+
+        # Upper Right: Enlarged ENTER PIN button
+        btn_pass = QPushButton("ENTER PIN")
+        btn_pass.setFixedSize(220, 70)
+        btn_pass.setFont(QFont("Segoe UI", 18, QFont.Bold))
+        btn_pass.setStyleSheet(f"""
+            QPushButton {{
+                background-color: {THEME['bg_panel']};
+                color: {THEME['text_main']};
+                border: 2px solid #888;
+                border-radius: 12px;
+                padding: 10px;
+            }}
+            QPushButton:pressed {{
+                background-color: #ddd;
+                color: black;
+            }}
+        """)
+        btn_pass.clicked.connect(on_enter_pin)
+        top_bar.addWidget(btn_pass)
+
+        # Upper Right: Enlarged SCAN CARD badge with upward arrow
+        lbl_scan = QLabel("SCAN CARD ⬆️")
+        lbl_scan.setAlignment(Qt.AlignCenter)
+        lbl_scan.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        lbl_scan.setFixedHeight(70)
+        lbl_scan.setStyleSheet(f"""
+            color: #111111;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.90);
+            border-radius: 12px;
+            padding: 10px 24px;
+            border: 2px solid {THEME['accent_cyan']};
+        """)
+        top_bar.addWidget(lbl_scan)
+
+        layout.addLayout(top_bar)
 
         layout.addStretch(1)
 
-        # Prominent Brand Logo (fills the screen width)
+        # Prominent Brand Logo (fills the center screen)
         self.lbl_logo = QLabel()
         self.lbl_logo.setAlignment(Qt.AlignCenter)
         self.lbl_logo.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -34,45 +78,6 @@ class LockScreenPage(QWidget):
         layout.addWidget(self.lbl_logo)
 
         layout.addStretch(1)
-
-        bot_row = QHBoxLayout()
-        btn_pass = QPushButton("ENTER PIN")
-        btn_pass.setFixedSize(160, 60)
-        btn_pass.setFont(QFont("Segoe UI", 14, QFont.Bold))
-        btn_pass.setStyleSheet(f"""
-            QPushButton {{
-                background-color: {THEME['bg_panel']};
-                color: {THEME['text_main']};
-                border: 2px solid #aaa;
-                border-radius: 10px;
-            }}
-            QPushButton:pressed {{
-                background-color: #ddd;
-                color: black;
-            }}
-        """)
-        btn_pass.clicked.connect(on_enter_pin)
-
-        lbl_scan = QLabel("SCAN CARD ⬇️")
-        lbl_scan.setAlignment(Qt.AlignCenter)
-        lbl_scan.setFont(QFont("Segoe UI", 18, QFont.Bold))
-        lbl_scan.setStyleSheet("""
-            color: black;
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.75);
-            border-radius: 10px;
-            padding: 10px 20px;
-            border: 1px solid #ccc;
-        """)
-
-        bot_row.addSpacing(20)
-        bot_row.addWidget(btn_pass)
-        bot_row.addStretch()
-        bot_row.addWidget(lbl_scan)
-        bot_row.addSpacing(20)
-
-        layout.addLayout(bot_row)
-        layout.addSpacing(30)
 
     def _update_logo_size(self):
         if hasattr(self, 'orig_logo_pixmap') and not self.orig_logo_pixmap.isNull():
