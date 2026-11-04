@@ -208,3 +208,4 @@ class JetsonExplorerPage(QWidget):
         if self.webview is not None:
             self.webview.setUrl(QUrl("about:blank"))
         self.on_back()
+

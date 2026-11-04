@@ -48,12 +48,19 @@ SENSOR_NAMES = [
 # ==========================================
 #   SENSOR & SAFETY THRESHOLDS
 # ==========================================
-DIST_MIN_VALID_CM      = 2.0
-DIST_MAX_VALID_CM      = 400.0
-DIST_CRITICAL_CM       = 30.0
-DIST_WARNING_CM        = 70.0
-DIST_SAFE_CM           = 150.0
-SENSOR_TIMEOUT_SEC     = 0.40  # Clear stale readings if no echo received within 400ms
+DIST_MIN_VALID_CM             = 3.0
+DIST_MAX_VALID_CM             = 400.0
+DIST_CRITICAL_CM              = 30.0
+DIST_WARNING_CM               = 70.0
+DIST_SAFE_CM                  = 150.0
+SENSOR_TIMEOUT_SEC            = 0.40  # Clear stale readings if no echo received within 400ms
+
+# Ultrasonic Noise Rejection & Filtering
+ULTRASONIC_FILTER_WINDOW      = 5     # 5-sample sliding median window to reject noise spikes
+ULTRASONIC_EMA_APPROACH       = 0.75  # Fast response when an obstacle is getting closer
+ULTRASONIC_EMA_RECEDE         = 0.45  # Smooth smoothing when an obstacle is moving away
+ULTRASONIC_MIN_PING_INTERVAL  = 0.065 # 65ms minimum spacing to prevent echo reverberation crosstalk
+ULTRASONIC_MISS_CLEAR_COUNT   = 3     # Require 3 consecutive missed echos before declaring zone clear
 
 NFC_SPI_SAFE_SPEED_HZ  = 50000  # 50kHz safe SPI speed to prevent MISO line noise (0xB2)
 
