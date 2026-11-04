@@ -17,6 +17,7 @@ class ActuatorController:
         self._buzzer_pattern = "OFF"  # "OFF", "SLOW", "MEDIUM", "FAST", "SOLID"
         self._running = True
         self._lock = threading.Lock()
+        self._wake_event = threading.Event()
 
         if IS_HARDWARE:
             self._init_hardware()
@@ -57,44 +58,58 @@ class ActuatorController:
 
     def set_radar_beep_mode(self, min_distance_cm: float):
         """Sets progressive non-blocking radar beeping based on closest obstacle."""
+        if min_distance_cm <= 0 or min_distance_cm >= 150.0:
+            new_pattern = "OFF"
+        elif min_distance_cm < 20.0:
+            new_pattern = "SOLID"
+        elif min_distance_cm < 40.0:
+            new_pattern = "FAST"
+        elif min_distance_cm < 80.0:
+            new_pattern = "MEDIUM"
+        else:
+            new_pattern = "SLOW"
+
         with self._lock:
-            if min_distance_cm <= 0 or min_distance_cm >= 150.0:
-                self._buzzer_pattern = "OFF"
-            elif min_distance_cm < 20.0:
-                self._buzzer_pattern = "SOLID"
-            elif min_distance_cm < 40.0:
-                self._buzzer_pattern = "FAST"
-            elif min_distance_cm < 80.0:
-                self._buzzer_pattern = "MEDIUM"
-            else:
-                self._buzzer_pattern = "SLOW"
+            changed = (new_pattern != self._buzzer_pattern)
+            self._buzzer_pattern = new_pattern
+
+        if changed and new_pattern != "OFF":
+            self._wake_event.set()
 
     def _buzzer_loop(self):
         """Background thread executing non-blocking audio alerts."""
+        buzzer_is_low = True
         while self._running:
             with self._lock:
                 pattern = self._buzzer_pattern
 
             if pattern == "OFF":
-                GPIO.output(PIN_BUZZER, GPIO.LOW)
-                time.sleep(0.05)
+                if not buzzer_is_low:
+                    GPIO.output(PIN_BUZZER, GPIO.LOW)
+                    buzzer_is_low = True
+                self._wake_event.clear()
+                self._wake_event.wait(timeout=0.5)
             elif pattern == "SOLID":
                 GPIO.output(PIN_BUZZER, GPIO.HIGH)
-                time.sleep(0.05)
+                buzzer_is_low = False
+                time.sleep(0.1)
             elif pattern == "FAST":
                 GPIO.output(PIN_BUZZER, GPIO.HIGH)
                 time.sleep(0.04)
                 GPIO.output(PIN_BUZZER, GPIO.LOW)
+                buzzer_is_low = True
                 time.sleep(0.06)
             elif pattern == "MEDIUM":
                 GPIO.output(PIN_BUZZER, GPIO.HIGH)
                 time.sleep(0.06)
                 GPIO.output(PIN_BUZZER, GPIO.LOW)
+                buzzer_is_low = True
                 time.sleep(0.18)
             elif pattern == "SLOW":
                 GPIO.output(PIN_BUZZER, GPIO.HIGH)
                 time.sleep(0.08)
                 GPIO.output(PIN_BUZZER, GPIO.LOW)
+                buzzer_is_low = True
                 time.sleep(0.35)
 
     def cleanup(self):

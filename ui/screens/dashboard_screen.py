@@ -68,13 +68,29 @@ class DashboardPage(QWidget):
         self.lbl_temp.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         right_layout.addWidget(self.lbl_temp, 2)
 
-        # Authenticated User ID
-        self.lbl_user = QLabel("Welcome User")
-        self.lbl_user.setAlignment(Qt.AlignCenter)
-        self.lbl_user.setFont(QFont("Segoe UI", 22, QFont.Bold))
-        self.lbl_user.setStyleSheet(f"color: {THEME['accent_green']}; margin-top: 4px;")
-        self.lbl_user.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        right_layout.addWidget(self.lbl_user, 1)
+        # Jetson Explorer Status & Launch Button (replaces static User ID)
+        self.btn_jetson = QPushButton("🚀 JETSON: CHECKING...")
+        self.btn_jetson.setFont(QFont("Segoe UI", 22, QFont.Bold))
+        self.btn_jetson.setMinimumHeight(85)
+        self.btn_jetson.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.btn_jetson.setStyleSheet("""
+            QPushButton {
+                background-color: #1e293b;
+                color: #f8fafc;
+                border-radius: 14px;
+                border: 3px solid #475569;
+                padding: 8px 14px;
+            }
+            QPushButton:pressed {
+                background-color: #334155;
+            }
+        """)
+        self.btn_jetson.clicked.connect(lambda: self.cb['open_jetson']())
+        right_layout.addWidget(self.btn_jetson, 1)
+
+        # Keep backward-compatible reference
+        self.lbl_user = self.btn_jetson
+        self._last_jetson_state = None
 
         # Main Driving Icon Buttons Grid (Enlarged for touch)
         btn_grid = QGridLayout()
@@ -179,4 +195,41 @@ class DashboardPage(QWidget):
         self.btn_left.setChecked(False)
         self.btn_haz.setChecked(False)
         self.btn_right.setChecked(False)
+
+    def update_jetson_status(self, status: dict):
+        host_ok = status.get("host_online", False)
+        web_ok = status.get("web_online", False)
+        temp_c = status.get("temp_c")
+        temp_part = f" {temp_c:.0f}°C |" if temp_c is not None else ""
+
+        if web_ok:
+            text = f"🟢 JETSON{temp_part} EXPLORER ↗"
+            border = "#16a34a"
+            bg = "#064e3b"
+        elif host_ok:
+            text = f"🟡 JETSON{temp_part} :3000 OFF"
+            border = "#d97706"
+            bg = "#451a03"
+        else:
+            text = "🔴 JETSON: OFFLINE"
+            border = "#dc2626"
+            bg = "#450a0a"
+
+        state_key = (text, border, bg)
+        if state_key != self._last_jetson_state:
+            self._last_jetson_state = state_key
+            self.btn_jetson.setText(text)
+            self.btn_jetson.setStyleSheet(f"""
+                QPushButton {{
+                    background-color: {bg};
+                    color: #ffffff;
+                    border-radius: 14px;
+                    border: 3px solid {border};
+                    padding: 8px 14px;
+                }}
+                QPushButton:pressed {{
+                    background-color: #1e293b;
+                }}
+            """)
+
 

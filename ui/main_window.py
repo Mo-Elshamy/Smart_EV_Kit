@@ -8,6 +8,7 @@ from hal.controller import CarHardware
 from ui.screens.lock_screen import LockScreenPage, PinScreenPage, ConfirmLockPage
 from ui.screens.dashboard_screen import DashboardPage
 from ui.screens.settings_screen import SettingsHubPage
+from ui.screens.jetson_screen import JetsonExplorerPage
 
 
 class EVSystem(QMainWindow):
@@ -37,6 +38,7 @@ class EVSystem(QMainWindow):
             'toggle_interior_lights': self.toggle_interior_lights,
             'prompt_lock': lambda: self.central_widget.setCurrentWidget(self.page_confirm),
             'open_settings': lambda: self.central_widget.setCurrentWidget(self.page_config),
+            'open_jetson': self.open_jetson_screen,
             'set_turn_signal': self.set_turn_signal
         }
 
@@ -62,12 +64,17 @@ class EVSystem(QMainWindow):
             on_confirm_lock=self.lock_system,
             on_cancel=lambda: self.central_widget.setCurrentWidget(self.page_dashboard)
         )
+        self.page_jetson = JetsonExplorerPage(
+            on_back=lambda: self.central_widget.setCurrentWidget(self.page_dashboard),
+            get_status_fn=self.car.jetson.get_status
+        )
 
         self.central_widget.addWidget(self.page_locked)      # 0
         self.central_widget.addWidget(self.page_password)    # 1
         self.central_widget.addWidget(self.page_dashboard)   # 2
         self.central_widget.addWidget(self.page_config)      # 3
         self.central_widget.addWidget(self.page_confirm)     # 4
+        self.central_widget.addWidget(self.page_jetson)      # 5
 
         self.central_widget.setCurrentWidget(self.page_locked)
 
@@ -88,15 +95,27 @@ class EVSystem(QMainWindow):
     # ==========================================
     def update_system(self):
         now = QDateTime.currentDateTime()
-        self.page_dashboard.lbl_clock.setText(now.toString("hh:mm"))
-        self.page_dashboard.lbl_date.setText(now.toString("ddd, MMM d").upper())
+        clock_str = now.toString("hh:mm")
+        if self.page_dashboard.lbl_clock.text() != clock_str:
+            self.page_dashboard.lbl_clock.setText(clock_str)
 
-        # If currently on the diagnostics tab, refresh diagnostics table
+        date_str = now.toString("ddd, MMM d").upper()
+        if self.page_dashboard.lbl_date.text() != date_str:
+            self.page_dashboard.lbl_date.setText(date_str)
+
+        # If currently on the diagnostics tab, refresh diagnostics table (~4Hz)
+        self._diag_tick = getattr(self, "_diag_tick", 0) + 1
         if self.central_widget.currentWidget() == self.page_config:
-            if self.page_config.content_stack.currentIndex() == 2:
+            if self.page_config.content_stack.currentIndex() == 2 and (self._diag_tick % 5 == 0):
                 self.page_config.update_diagnostics_data(
                     self.car.distances, self.car.temp_data, self.car.nfc_reader
                 )
+
+        # Update Jetson status telemetry on dashboard & page (~1Hz)
+        if self._diag_tick % 20 == 0:
+            self.page_dashboard.update_jetson_status(self.car.jetson.get_status())
+            if self.central_widget.currentWidget() == self.page_jetson:
+                self.page_jetson.refresh_status()
 
         # Process Scanned NFC Card
         scanned_id = self.car.nfc_id
@@ -135,7 +154,9 @@ class EVSystem(QMainWindow):
         # Update environment telemetry
         t = self.car.temp_data.get("t", 0.0)
         h = self.car.temp_data.get("h", 0.0)
-        self.page_dashboard.lbl_temp.setText(f"{t:.0f}°C  {h:.0f}%")
+        temp_str = f"{t:.0f}°C  {h:.0f}%"
+        if self.page_dashboard.lbl_temp.text() != temp_str:
+            self.page_dashboard.lbl_temp.setText(temp_str)
 
     # ==========================================
     #   SECURITY & VEHICLE STATE MANAGEMENT
@@ -143,7 +164,7 @@ class EVSystem(QMainWindow):
     def unlock_system(self, user_label="Authorized"):
         self.is_locked = False
         self.central_widget.setCurrentWidget(self.page_dashboard)
-        self.page_dashboard.lbl_user.setText(str(user_label))
+        self.page_dashboard.update_jetson_status(self.car.jetson.get_status())
 
         # Energize Motor Relay 0 (Active Low -> LOW=ON)
         self.car.set_relay(0, True)
@@ -154,6 +175,10 @@ class EVSystem(QMainWindow):
         self.car.lights.set_interior_rgb(0, 255, 255)
         saved_rgb = self.storage.interior_rgb
         QTimer.singleShot(800, lambda: self.car.lights.set_interior_rgb(*saved_rgb))
+
+    def open_jetson_screen(self):
+        self.page_jetson.open_dashboard()
+        self.central_widget.setCurrentWidget(self.page_jetson)
 
     def lock_system(self):
         self.is_locked = True

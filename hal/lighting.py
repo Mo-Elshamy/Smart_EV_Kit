@@ -113,12 +113,25 @@ class LightingSystem:
 
     def _animation_loop(self):
         blink_state = False
+        strip_is_dark = False
         while self.running:
             with self._lock:
-                self._render_front(blink_state)
-                self._render_interior()
-                self._render_back(blink_state)
-            if IS_HARDWARE and not isinstance(self.strip, MockPixelStrip):
+                all_off = (
+                    not self.front_enabled
+                    and not self.interior_enabled
+                    and not self.back_enabled
+                    and self.turn_signal_state == "OFF"
+                )
+                if not (all_off and strip_is_dark):
+                    self._render_front(blink_state)
+                    self._render_interior()
+                    self._render_back(blink_state)
+                    need_show = True
+                    strip_is_dark = all_off
+                else:
+                    need_show = False
+
+            if need_show and IS_HARDWARE and not isinstance(self.strip, MockPixelStrip):
                 try:
                     self.strip.show()
                 except Exception:

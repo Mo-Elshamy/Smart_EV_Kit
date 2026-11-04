@@ -43,14 +43,25 @@ class NFCManager:
     def _init_hardware(self):
         self._hard_reset()
         try:
-            self.core = MFRC522(pin_rst=PIN_NFC_RST)
-            # Apply safe SPI speed to prevent 0xB2 MISO line noise
-            if hasattr(self.core, 'spi') and self.core.spi:
-                self.core.spi.max_speed_hz = NFC_SPI_SAFE_SPEED_HZ
+            # Close previous SPI handle if re-initializing
+            if self.core and hasattr(self.core, 'spi') and self.core.spi:
+                try:
+                    self.core.spi.close()
+                except Exception:
+                    pass
+
+            # Pass spd=NFC_SPI_SAFE_SPEED_HZ directly so MFRC522_Init() runs at safe speed
+            self.core = MFRC522(spd=NFC_SPI_SAFE_SPEED_HZ, pin_rst=PIN_NFC_RST)
+            # Prevent duplicate StreamHandlers in mfrc522Logger
+            if hasattr(self.core, 'logger') and len(self.core.logger.handlers) > 1:
+                self.core.logger.handlers = self.core.logger.handlers[:1]
 
             version = self.core.Read_MFRC522(MFRC522.VersionReg)
             if version in [0x91, 0x92]:
-                self.reader = SimpleMFRC522()
+                # Re-ensure MFRC522 registers and timer are initialized at safe SPI speed
+                self.core.MFRC522_Init()
+                # Avoid SimpleMFRC522.__init__() which creates a second MFRC522() on GPIO 15!
+                self.reader = SimpleMFRC522.__new__(SimpleMFRC522)
                 self.reader.READER = self.core
                 self.is_connected = True
                 print(f"NFC reader initialized successfully (version: {hex(version)}).")
@@ -66,15 +77,20 @@ class NFCManager:
     def _read_loop(self):
         last_scanned = None
         last_scan_time = 0
+        init_attempts = 0
 
         while self.running:
             if not self.reader:
-                time.sleep(2.0)
-                self._init_hardware()
+                if init_attempts < 3:
+                    init_attempts += 1
+                    time.sleep(3.0)
+                    self._init_hardware()
+                else:
+                    time.sleep(10.0)
                 continue
 
             try:
-                card_id, _ = self.reader.read_no_block()
+                card_id = self.reader.read_id_no_block()
                 now = time.time()
                 if card_id:
                     # Debounce duplicate reads within 2 seconds
@@ -85,7 +101,7 @@ class NFCManager:
                             self.latest_id = str(card_id)
                         if callable(self.on_card_detected):
                             self.on_card_detected(str(card_id))
-                time.sleep(0.2)
+                time.sleep(0.25)
             except Exception:
                 time.sleep(0.5)
 

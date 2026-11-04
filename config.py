@@ -76,3 +76,14 @@ THEME = {
     "menu_sel": "#cccccc"
 }
 
+# ==========================================
+#   JETSON EXPLORER CONFIGURATION
+# ==========================================
+JETSON_IP = "192.168.10.112"
+JETSON_WEB_PORT = 3000
+JETSON_SSH_PORT = 22
+JETSON_URL = f"http://{JETSON_IP}:{JETSON_WEB_PORT}"
+JETSON_POLL_INTERVAL_SEC = 5.0
+JETSON_SSH_USER = "jetson"  # Default user for thermal checks
+
+

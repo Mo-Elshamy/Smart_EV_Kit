@@ -2,6 +2,7 @@ from hal.lighting import LightingSystem
 from hal.sensors import SensorArray
 from hal.nfc import NFCManager
 from hal.actuators import ActuatorController
+from hal.jetson import JetsonMonitor
 
 try:
     import RPi.GPIO as GPIO
@@ -18,6 +19,7 @@ class CarHardware:
         self.sensors = SensorArray()
         self.actuators = ActuatorController()
         self.nfc = NFCManager(on_card_detected=self._on_nfc_scanned)
+        self.jetson = JetsonMonitor()
 
         self._cached_nfc_id = None
 
@@ -70,6 +72,7 @@ class CarHardware:
 
     def cleanup(self):
         print("Cleaning up hardware components...")
+        self.jetson.cleanup()
         self.actuators.cleanup()
         self.sensors.cleanup()
         self.lights.stop()
