@@ -6,10 +6,18 @@ Entrypoint executed automatically on vehicle boot.
 import sys
 import os
 
-# Chromium sandbox flags for running under root / vehicle kiosk mode
+# Chromium flags for root / kiosk mode and GPU-accelerated WebGL rendering
 flags = os.environ.get("QTWEBENGINE_CHROMIUM_FLAGS", "")
-if "--no-sandbox" not in flags:
-    os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = (flags + " --no-sandbox --disable-dev-shm-usage").strip()
+required_flags = [
+    "--no-sandbox",
+    "--disable-dev-shm-usage",
+    "--ignore-gpu-blocklist",
+    "--enable-gpu-rasterization"
+]
+for rf in required_flags:
+    if rf not in flags:
+        flags = (flags + " " + rf).strip()
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = flags
 
 try:
     from PyQt5.QtWebEngine import QtWebEngine

@@ -7,7 +7,7 @@ from PyQt5.QtGui import QFont
 from config import THEME, JETSON_URL, JETSON_IP, JETSON_WEB_PORT
 
 try:
-    from PyQt5.QtWebEngineWidgets import QWebEngineView
+    from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineScript, QWebEngineSettings
     HAS_WEBENGINE = True
 except ImportError:
     HAS_WEBENGINE = False
@@ -139,6 +139,53 @@ class JetsonExplorerPage(QWidget):
         if HAS_WEBENGINE:
             self.webview = QWebEngineView()
             self.webview.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+            # Enable GPU hardware acceleration & WebGL
+            settings = self.webview.settings()
+            settings.setAttribute(QWebEngineSettings.Accelerated2dCanvasEnabled, True)
+            settings.setAttribute(QWebEngineSettings.WebGLEnabled, True)
+            settings.setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
+            settings.setAttribute(QWebEngineSettings.PlaybackRequiresUserGesture, False)
+            settings.setAttribute(QWebEngineSettings.JavascriptCanAccessClipboard, True)
+
+            # Inject Canvas roundRect polyfill at DocumentCreation
+            # (Fixes Chromium <99 TypeError: ctx.roundRect is not a function which blocked 2D/3D & Leaflet)
+            poly_script = QWebEngineScript()
+            poly_script.setName("canvasRoundRectPolyfill")
+            poly_script.setInjectionPoint(QWebEngineScript.DocumentCreation)
+            poly_script.setWorldId(QWebEngineScript.MainWorld)
+            poly_script.setRunsOnSubFrames(True)
+            poly_script.setSourceCode("""
+                (function() {
+                    function polyfillRoundRect(proto) {
+                        if (proto && !proto.roundRect) {
+                            proto.roundRect = function(x, y, w, h, radii) {
+                                if (!radii) radii = 0;
+                                if (typeof radii === 'number') radii = [radii, radii, radii, radii];
+                                else if (radii.length === 1) radii = [radii[0], radii[0], radii[0], radii[0]];
+                                else if (radii.length === 2) radii = [radii[0], radii[1], radii[0], radii[1]];
+                                else if (radii.length === 3) radii = [radii[0], radii[1], radii[2], radii[1]];
+                                var tl = radii[0], tr = radii[1], br = radii[2], bl = radii[3];
+                                var maxR = Math.min(Math.abs(w) / 2, Math.abs(h) / 2);
+                                tl = Math.min(tl, maxR);
+                                tr = Math.min(tr, maxR);
+                                br = Math.min(br, maxR);
+                                bl = Math.min(bl, maxR);
+                                this.moveTo(x + tl, y);
+                                this.arcTo(x + w, y, x + w, y + h, tr);
+                                this.arcTo(x + w, y + h, x, y + h, br);
+                                this.arcTo(x, y + h, x, y, bl);
+                                this.arcTo(x, y, x + w, y, tl);
+                                return this;
+                            };
+                        }
+                    }
+                    if (typeof CanvasRenderingContext2D !== 'undefined') polyfillRoundRect(CanvasRenderingContext2D.prototype);
+                    if (typeof Path2D !== 'undefined') polyfillRoundRect(Path2D.prototype);
+                })();
+            """)
+            self.webview.page().profile().scripts().insert(poly_script)
+
             self.stack.addWidget(self.webview)
         else:
             self.webview = None
