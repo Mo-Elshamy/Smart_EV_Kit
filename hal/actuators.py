@@ -57,16 +57,17 @@ class ActuatorController:
         threading.Thread(target=_beep, daemon=True).start()
 
     def set_radar_beep_mode(self, min_distance_cm: float):
-        """Sets progressive non-blocking radar beeping based on closest obstacle."""
-        if min_distance_cm <= 0 or min_distance_cm >= 150.0:
+        """Sets progressive non-blocking radar beeping based on closest obstacle within 60cm."""
+        from config import DIST_MAX_VALID_CM, DIST_CRITICAL_CM, DIST_WARNING_CM
+        if min_distance_cm <= 0 or min_distance_cm > DIST_MAX_VALID_CM:
             new_pattern = "OFF"
-        elif min_distance_cm < 20.0:
+        elif min_distance_cm < DIST_CRITICAL_CM:          # < 20.0 cm: Solid alarm
             new_pattern = "SOLID"
-        elif min_distance_cm < 40.0:
+        elif min_distance_cm < (DIST_CRITICAL_CM + 12.0): # 20 - 32 cm: Fast beep
             new_pattern = "FAST"
-        elif min_distance_cm < 80.0:
+        elif min_distance_cm < DIST_WARNING_CM:           # 32 - 40 cm: Medium beep
             new_pattern = "MEDIUM"
-        else:
+        else:                                             # 40 - 60 cm: Slow beep
             new_pattern = "SLOW"
 
         with self._lock:

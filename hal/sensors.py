@@ -80,13 +80,13 @@ class SensorArray:
             now = time.time()
 
             with self._lock:
-                # Valid physical range check (reject ultrasonic ringing < 3cm or out of range > 400cm)
+                # Valid physical range check (within 60cm max range)
                 if DIST_MIN_VALID_CM <= dist <= DIST_MAX_VALID_CM:
                     self._history[idx].append(dist)
                     self._miss_counts[idx] = 0
                     self.last_echo_times[idx] = now
 
-                    # Critical obstacle fast-path (< 30cm)
+                    # Critical obstacle fast-path (< 20cm)
                     # 2 consecutive critical samples immediately confirm close obstacle for safety
                     if dist < DIST_CRITICAL_CM:
                         self._critical_counts[idx] += 1
@@ -106,6 +106,13 @@ class SensorArray:
                     else:
                         alpha = ULTRASONIC_EMA_APPROACH if med < prev else ULTRASONIC_EMA_RECEDE
                         self.distances[idx] = round(alpha * med + (1.0 - alpha) * prev, 1)
+                else:
+                    # Outside 60cm range: count towards clear decay
+                    self._miss_counts[idx] += 1
+                    if self._miss_counts[idx] >= ULTRASONIC_MISS_CLEAR_COUNT:
+                        self._history[idx].clear()
+                        self._critical_counts[idx] = 0
+                        self.distances[idx] = 0.0
 
     def trigger(self):
         """Send a 10µs pulse to the shared trigger pin (enforces min interval to prevent reverberations)."""

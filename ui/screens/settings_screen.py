@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QColor
-from config import THEME, SENSOR_NAMES
+from config import THEME, SENSOR_NAMES, DIST_CRITICAL_CM, DIST_WARNING_CM
 
 
 class SettingsHubPage(QWidget):
@@ -487,10 +487,10 @@ class SettingsHubPage(QWidget):
             if dist == 0.0:
                 status = "CLEAR"
                 color = QColor(100, 116, 139)
-            elif dist < 30.0:
+            elif dist < DIST_CRITICAL_CM:
                 status = "CRITICAL"
                 color = QColor(220, 38, 38)
-            elif dist < 70.0:
+            elif dist < DIST_WARNING_CM:
                 status = "WARNING"
                 color = QColor(217, 119, 6)
             else:
