@@ -48,7 +48,7 @@ SENSOR_NAMES = [
 # ==========================================
 #   SENSOR & SAFETY THRESHOLDS (60cm Max Range)
 # ==========================================
-DIST_MIN_VALID_CM             = 3.0
+DIST_MIN_VALID_CM             = 4.0   # 4cm min range (rejects transducer ring-down jitter < 4cm)
 DIST_MAX_VALID_CM             = 60.0  # Max sensor range capped at 60cm per specification
 DIST_CRITICAL_CM              = 20.0  # < 20cm: Critical red arc / solid tone
 DIST_WARNING_CM               = 40.0  # 20-40cm: Amber warning arc / fast beep

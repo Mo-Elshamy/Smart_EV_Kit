@@ -18,12 +18,13 @@ except ImportError:
 
 
 class RangeConsensusFilter:
-    """Consensus filter: rejects any sudden diversion or isolated spike.
+    """Consensus filter: rejects sudden diversions and isolated noise spikes.
     
-    Only updates when multiple readings (3 of last 4) fall in the same range cluster.
+    Requires 3 consistent readings within tolerance to confirm an obstacle.
+    Promptly clears when no obstacle is detected (prevents stuck alerts).
     """
 
-    def __init__(self, required_consensus=3, window_size=4, tolerance_cm=12.0):
+    def __init__(self, required_consensus=3, window_size=4, tolerance_cm=10.0):
         self.window = deque(maxlen=window_size)
         self.required_consensus = required_consensus
         self.tolerance_cm = tolerance_cm
@@ -32,31 +33,35 @@ class RangeConsensusFilter:
     def update(self, raw_cm: float) -> float:
         self.window.append(raw_cm)
 
-        # 1. Check for 'Clear' consensus (2+ zeros at the tail or 3+ zeros in window confirm clear zone)
+        # 1. Clear immediately if recent readings are clear (0.0)
+        # If >= 2 zeros in the window of 4, the path is clear.
         zeros = sum(1 for x in self.window if x == 0.0)
-        if zeros >= self.required_consensus or (len(self.window) >= 2 and self.window[-1] == 0.0 and self.window[-2] == 0.0):
+        if zeros >= 2:
             self.current_confirmed = 0.0
             return 0.0
 
-        # 2. Extract non-zero candidate readings within valid range
+        # 2. Extract non-zero readings
         non_zeros = [x for x in self.window if x > 0.0]
         if len(non_zeros) < self.required_consensus:
-            # Not enough non-zero readings yet -> ignore sudden diversion, keep current confirmed
-            return self.current_confirmed
+            # Not enough non-zero readings to form consensus -> clear immediately (do not latch)
+            self.current_confirmed = 0.0
+            return 0.0
 
         # 3. Find if there is an agreement cluster of size >= required_consensus
-        # where readings agree within tolerance_cm (allows smooth tracking of moving hand/car)
+        # where readings agree within tolerance_cm
         found_cluster = None
         for anchor in reversed(non_zeros):
-            tol = max(self.tolerance_cm, anchor * 0.20)
+            tol = max(self.tolerance_cm, anchor * 0.15)
             cluster = [x for x in non_zeros if abs(x - anchor) <= tol]
             if len(cluster) >= self.required_consensus:
                 found_cluster = cluster
                 break
 
         if found_cluster:
-            # Multiple readings agree in the same range cluster!
             self.current_confirmed = round(statistics.median(found_cluster), 1)
+        else:
+            # Divergent / scattered readings -> reject as noise
+            self.current_confirmed = 0.0
 
         return self.current_confirmed
 
@@ -106,11 +111,11 @@ class SensorArray:
             try:
                 # 1. Wait until all previous long-range echoes have returned LOW (prevents echo overlap)
                 t_wait = time.perf_counter()
-                while any(GPIO.input(p) for p in PINS_ECHO) and (time.perf_counter() - t_wait < 0.045):
+                while any(GPIO.input(p) for p in PINS_ECHO) and (time.perf_counter() - t_wait < 0.050):
                     time.sleep(0.001)
 
-                # 2. Acoustic quiet interval (30ms) so room reverberations decay completely
-                time.sleep(0.030)
+                # 2. Acoustic quiet interval (25ms) so room reverberations decay completely
+                time.sleep(0.025)
 
                 # 3. Fire clean 15µs trigger pulse on shared PIN_TRIG
                 GPIO.output(PIN_TRIG, True)
@@ -120,32 +125,41 @@ class SensorArray:
                 GPIO.output(PIN_TRIG, False)
 
                 t0 = time.perf_counter()
-                seen_low = [not GPIO.input(p) for p in PINS_ECHO]
+
+                # Sleep 10ms: saves CPU and completely ignores any pre-echo trigger/electrical noise
+                time.sleep(0.010)
+
                 rises = [None] * len(PINS_ECHO)
                 falls = [None] * len(PINS_ECHO)
 
-                # On this hardware, ECHO rises at ~12.2ms after TRIG falls, and a 60cm echo lasts 3.5ms
-                # (falling by ~15.9ms). Poll continuously from t0 to 16.8ms so no edge is ever missed.
-                t_limit = t0 + 0.0168
+                # On this hardware, ECHO rises at ~12.2ms after TRIG falls.
+                # An obstacle at 60cm has a pulse duration of 3.5ms (falling by ~15.7ms).
+                # Poll continuously from t0 + 10ms to t0 + 16.5ms.
+                t_limit = t0 + 0.0165
                 while time.perf_counter() < t_limit:
                     tc = time.perf_counter()
                     for i, pin in enumerate(PINS_ECHO):
-                        if falls[i] is None:
-                            val = GPIO.input(pin)
-                            if not val:
-                                if rises[i] is None:
-                                    seen_low[i] = True
-                                else:
-                                    falls[i] = tc
-                            else:
-                                if seen_low[i] and rises[i] is None:
-                                    rises[i] = tc
+                        val = GPIO.input(pin)
+                        if val:
+                            if rises[i] is None:
+                                rises[i] = tc
+                            elif falls[i] is not None:
+                                # Pin went HIGH again -> previous low was an electrical noise dip!
+                                falls[i] = None
+                        else:
+                            if rises[i] is not None and falls[i] is None:
+                                falls[i] = tc
 
-                # 4. Update each sensor's RangeConsensusFilter
+                # 4. Post-window validation and consensus update:
+                # If an obstacle is <= 60cm, its echo pulse MUST be finished and LOW by t_limit.
+                # If the pin is STILL HIGH at t_limit, the sound wave is traveling out in open space
+                # (> 60cm or timeout). Any candidate fall was motor/vibration noise.
                 with self._lock:
                     for i in range(len(PINS_ECHO)):
                         raw_d = 0.0
-                        if rises[i] is not None and falls[i] is not None:
+                        pin_still_high = GPIO.input(pin)
+
+                        if rises[i] is not None and falls[i] is not None and not pin_still_high:
                             dt = falls[i] - rises[i]
                             d = (dt * 34300.0) / 2.0
                             if DIST_MIN_VALID_CM <= d <= DIST_MAX_VALID_CM:

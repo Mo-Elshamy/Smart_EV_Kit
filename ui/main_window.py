@@ -146,8 +146,16 @@ class EVSystem(QMainWindow):
         distances = self.car.distances
         self.page_dashboard.parking_viz.update_sensor_data(distances)
 
-        # Proximity audio alert (Non-blocking progressive rate)
-        active_distances = [d for d in distances if d > 0]
+        # Proximity audio alert (Direction-aware: Drive vs Reverse)
+        is_reversing = self.page_dashboard.btn_reverse.isChecked()
+        if is_reversing:
+            # Reverse: sound alert for rear obstacles (4..7) and front corners (0, 3)
+            alert_sensors = [distances[i] for i in [4, 5, 6, 7, 0, 3] if i < len(distances)]
+        else:
+            # Forward Drive: sound alert ONLY for front obstacles (0..3)
+            alert_sensors = distances[:4]
+
+        active_distances = [d for d in alert_sensors if d > 0]
         min_dist = min(active_distances, default=999.0)
         self.car.update_radar_beep(min_dist)
 
@@ -208,6 +216,9 @@ class EVSystem(QMainWindow):
 
     def toggle_reverse(self, state: bool):
         self.car.set_relay(1, state)
+        if not state:
+            # Switching back to forward drive: immediately silence rear proximity alarm
+            self.car.update_radar_beep(999.0)
 
     def set_turn_signal(self, mode: str):
         self.car.lights.set_turn_signal(mode)
